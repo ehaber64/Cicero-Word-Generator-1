@@ -102,6 +102,20 @@ namespace DataStructures
             return channelCollections[ct];
         }
 
+        /// <summary>
+        /// Retrieves all logical channels associated with this channel manager.
+        /// </summary>
+        public List<LogicalChannel> AllChannels
+        {
+            get
+            {
+                List<LogicalChannel> channels = new List<LogicalChannel>();
+                foreach (HardwareChannel.HardwareConstants.ChannelTypes ct in HardwareChannel.HardwareConstants.allChannelTypes)
+                    channels.AddRange(GetDeviceCollection(ct).Channels.Values);
+                return channels;
+            }
+        }
+
 
         [OnDeserialized]
         public void ensureProperDeserialization(StreamingContext sc)

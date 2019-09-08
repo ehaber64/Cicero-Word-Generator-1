@@ -45,6 +45,9 @@ namespace WordGenerator.Controls
             this.createModeButton = new System.Windows.Forms.Button();
             this.destroyModeButton = new System.Windows.Forms.Button();
             this.storeMode = new System.Windows.Forms.Button();
+            this.orderModes = new System.Windows.Forms.ComboBox();
+            this.copyRestValues = new System.Windows.Forms.Button();
+            this.autoSetDwellWords = new System.Windows.Forms.CheckBox();
             this.digitalOverridesCountLabel = new System.Windows.Forms.Label();
             this.analogOverridesCountLabel = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -86,7 +89,7 @@ namespace WordGenerator.Controls
             // hideHiddenTimestepsCheckbox
             // 
             this.hideHiddenTimestepsCheckbox.AutoSize = true;
-            this.hideHiddenTimestepsCheckbox.Location = new System.Drawing.Point(59, 58);
+            this.hideHiddenTimestepsCheckbox.Location = new System.Drawing.Point(73, 24);
             this.hideHiddenTimestepsCheckbox.Name = "hideHiddenTimestepsCheckbox";
             this.hideHiddenTimestepsCheckbox.Size = new System.Drawing.Size(54, 17);
             this.hideHiddenTimestepsCheckbox.TabIndex = 5;
@@ -114,7 +117,7 @@ namespace WordGenerator.Controls
             this.analogPreviewAutoUpdate.AutoSize = true;
             this.analogPreviewAutoUpdate.Checked = true;
             this.analogPreviewAutoUpdate.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.analogPreviewAutoUpdate.Location = new System.Drawing.Point(65, 216);
+            this.analogPreviewAutoUpdate.Location = new System.Drawing.Point(3, 201);
             this.analogPreviewAutoUpdate.Name = "analogPreviewAutoUpdate";
             this.analogPreviewAutoUpdate.Size = new System.Drawing.Size(48, 17);
             this.analogPreviewAutoUpdate.TabIndex = 5;
@@ -123,7 +126,7 @@ namespace WordGenerator.Controls
             // 
             // analogPreviewUpdate
             // 
-            this.analogPreviewUpdate.Location = new System.Drawing.Point(2, 212);
+            this.analogPreviewUpdate.Location = new System.Drawing.Point(2, 171);
             this.analogPreviewUpdate.Name = "analogPreviewUpdate";
             this.analogPreviewUpdate.Size = new System.Drawing.Size(57, 23);
             this.analogPreviewUpdate.TabIndex = 4;
@@ -168,7 +171,7 @@ namespace WordGenerator.Controls
             // 
             // seqNameBox
             // 
-            this.seqNameBox.Location = new System.Drawing.Point(2, 373);
+            this.seqNameBox.Location = new System.Drawing.Point(2, 417);
             this.seqNameBox.Name = "seqNameBox";
             this.seqNameBox.Size = new System.Drawing.Size(112, 20);
             this.seqNameBox.TabIndex = 2;
@@ -176,17 +179,17 @@ namespace WordGenerator.Controls
             // 
             // seqDescBox
             // 
-            this.seqDescBox.Location = new System.Drawing.Point(3, 416);
+            this.seqDescBox.Location = new System.Drawing.Point(3, 453);
             this.seqDescBox.Multiline = true;
             this.seqDescBox.Name = "seqDescBox";
-            this.seqDescBox.Size = new System.Drawing.Size(112, 191);
+            this.seqDescBox.Size = new System.Drawing.Size(112, 138);
             this.seqDescBox.TabIndex = 3;
             this.seqDescBox.TextChanged += new System.EventHandler(this.seqDescBox_TextChanged);
             // 
             // sequenceNameLabel
             // 
             this.sequenceNameLabel.AutoSize = true;
-            this.sequenceNameLabel.Location = new System.Drawing.Point(13, 357);
+            this.sequenceNameLabel.Location = new System.Drawing.Point(13, 402);
             this.sequenceNameLabel.Name = "sequenceNameLabel";
             this.sequenceNameLabel.Size = new System.Drawing.Size(90, 13);
             this.sequenceNameLabel.TabIndex = 13;
@@ -195,7 +198,7 @@ namespace WordGenerator.Controls
             // sequenceDescriptionLabel
             // 
             this.sequenceDescriptionLabel.AutoSize = true;
-            this.sequenceDescriptionLabel.Location = new System.Drawing.Point(2, 400);
+            this.sequenceDescriptionLabel.Location = new System.Drawing.Point(2, 438);
             this.sequenceDescriptionLabel.Name = "sequenceDescriptionLabel";
             this.sequenceDescriptionLabel.Size = new System.Drawing.Size(115, 13);
             this.sequenceDescriptionLabel.TabIndex = 14;
@@ -204,7 +207,7 @@ namespace WordGenerator.Controls
             // createModeButton
             // 
             this.createModeButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.createModeButton.Location = new System.Drawing.Point(81, 90);
+            this.createModeButton.Location = new System.Drawing.Point(81, 73);
             this.createModeButton.Name = "createModeButton";
             this.createModeButton.Size = new System.Drawing.Size(20, 20);
             this.createModeButton.TabIndex = 18;
@@ -216,7 +219,7 @@ namespace WordGenerator.Controls
             // destroyModeButton
             // 
             this.destroyModeButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.destroyModeButton.Location = new System.Drawing.Point(106, 90);
+            this.destroyModeButton.Location = new System.Drawing.Point(106, 73);
             this.destroyModeButton.Name = "destroyModeButton";
             this.destroyModeButton.Size = new System.Drawing.Size(20, 20);
             this.destroyModeButton.TabIndex = 19;
@@ -228,7 +231,7 @@ namespace WordGenerator.Controls
             // storeMode
             // 
             this.storeMode.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.storeMode.Location = new System.Drawing.Point(80, 114);
+            this.storeMode.Location = new System.Drawing.Point(80, 97);
             this.storeMode.Name = "storeMode";
             this.storeMode.Size = new System.Drawing.Size(47, 20);
             this.storeMode.TabIndex = 21;
@@ -237,10 +240,49 @@ namespace WordGenerator.Controls
             this.storeMode.UseVisualStyleBackColor = true;
             this.storeMode.Click += new System.EventHandler(this.storeMode_Click);
             // 
+            // orderModes
+            // 
+            this.orderModes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.orderModes.FormattingEnabled = true;
+            this.orderModes.Location = new System.Drawing.Point(5, 120);
+            this.orderModes.Name = "orderModes";
+            this.orderModes.Size = new System.Drawing.Size(95, 21);
+            this.orderModes.TabIndex = 16;
+            this.toolTip1.SetToolTip(this.orderModes, "Select a sorting method for the modes.");
+            this.orderModes.DropDown += new System.EventHandler(this.orderModesComboBox_DropDown);
+            this.orderModes.SelectedIndexChanged += new System.EventHandler(this.orderModesComboBox_SelectedIndexChanged);
+            // 
+            // copyRestValues
+            // 
+            this.copyRestValues.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.copyRestValues.Location = new System.Drawing.Point(5, 46);
+            this.copyRestValues.Name = "copyRestValues";
+            this.copyRestValues.Size = new System.Drawing.Size(95, 23);
+            this.copyRestValues.TabIndex = 21;
+            this.copyRestValues.Text = "Copy rest values";
+            this.toolTip1.SetToolTip(this.copyRestValues, "Copy rest values timestep over to output now");
+            this.copyRestValues.UseVisualStyleBackColor = true;
+            this.copyRestValues.Click += new System.EventHandler(this.copyRestValues_Click);
+            // 
+            // autoSetDwellWords
+            // 
+            this.autoSetDwellWords.AutoSize = true;
+            this.autoSetDwellWords.Checked = true;
+            this.autoSetDwellWords.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.autoSetDwellWords.Location = new System.Drawing.Point(3, 220);
+            this.autoSetDwellWords.Name = "autoSetDwellWords";
+            this.autoSetDwellWords.Size = new System.Drawing.Size(120, 17);
+            this.autoSetDwellWords.TabIndex = 5;
+            this.autoSetDwellWords.Text = "Autoset dwell words";
+            this.toolTip1.SetToolTip(this.autoSetDwellWords, "If checked, then when a sequence is run this will set the dwell word of each chan" +
+        "nel to be the value of the channel when the sequence finishes.");
+            this.autoSetDwellWords.UseVisualStyleBackColor = true;
+            this.autoSetDwellWords.CheckedChanged += new System.EventHandler(this.autoSetDwellWords_CheckedChanged);
+            // 
             // digitalOverridesCountLabel
             // 
             this.digitalOverridesCountLabel.AutoSize = true;
-            this.digitalOverridesCountLabel.Location = new System.Drawing.Point(3, 36);
+            this.digitalOverridesCountLabel.Location = new System.Drawing.Point(3, 27);
             this.digitalOverridesCountLabel.Name = "digitalOverridesCountLabel";
             this.digitalOverridesCountLabel.Size = new System.Drawing.Size(35, 13);
             this.digitalOverridesCountLabel.TabIndex = 15;
@@ -249,7 +291,7 @@ namespace WordGenerator.Controls
             // analogOverridesCountLabel
             // 
             this.analogOverridesCountLabel.AutoSize = true;
-            this.analogOverridesCountLabel.Location = new System.Drawing.Point(3, 13);
+            this.analogOverridesCountLabel.Location = new System.Drawing.Point(3, 8);
             this.analogOverridesCountLabel.Name = "analogOverridesCountLabel";
             this.analogOverridesCountLabel.Size = new System.Drawing.Size(35, 13);
             this.analogOverridesCountLabel.TabIndex = 16;
@@ -289,7 +331,7 @@ namespace WordGenerator.Controls
             this.runControl1.IsRunNoSaveEnabled = true;
             this.runControl1.Location = new System.Drawing.Point(2, 3);
             this.runControl1.Name = "runControl1";
-            this.runControl1.Size = new System.Drawing.Size(119, 351);
+            this.runControl1.Size = new System.Drawing.Size(119, 397);
             this.runControl1.TabIndex = 1;
             // 
             // sequenceViewPanel
@@ -354,6 +396,9 @@ namespace WordGenerator.Controls
             this.upperCornerPanel.Controls.Add(this.analogOverridesCountLabel);
             this.upperCornerPanel.Controls.Add(this.analogPreviewUpdate);
             this.upperCornerPanel.Controls.Add(this.hideHiddenTimestepsCheckbox);
+            this.upperCornerPanel.Controls.Add(this.copyRestValues);
+            this.upperCornerPanel.Controls.Add(this.orderModes);
+            this.upperCornerPanel.Controls.Add(this.autoSetDwellWords);
             this.upperCornerPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.upperCornerPanel.Location = new System.Drawing.Point(0, 0);
             this.upperCornerPanel.Margin = new System.Windows.Forms.Padding(0);
@@ -363,7 +408,7 @@ namespace WordGenerator.Controls
             // 
             // modeTextBox
             // 
-            this.modeTextBox.Location = new System.Drawing.Point(5, 114);
+            this.modeTextBox.Location = new System.Drawing.Point(5, 97);
             this.modeTextBox.Name = "modeTextBox";
             this.modeTextBox.Size = new System.Drawing.Size(73, 20);
             this.modeTextBox.TabIndex = 20;
@@ -372,10 +417,11 @@ namespace WordGenerator.Controls
             // 
             this.modeBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.modeBox.FormattingEnabled = true;
-            this.modeBox.Location = new System.Drawing.Point(5, 90);
+            this.modeBox.Location = new System.Drawing.Point(5, 73);
             this.modeBox.Name = "modeBox";
             this.modeBox.Size = new System.Drawing.Size(73, 21);
             this.modeBox.TabIndex = 17;
+            this.modeBox.DropDown += new System.EventHandler(this.modeComboBox_DropDown);
             this.modeBox.SelectedIndexChanged += new System.EventHandler(this.modeBox_SelectedIndexChanged);
             // 
             // digitalAnalogSplitContainer
@@ -569,5 +615,8 @@ namespace WordGenerator.Controls
         private System.Windows.Forms.TextBox modeTextBox;
         public System.Windows.Forms.ComboBox modeBox;
         private System.Windows.Forms.Label beginHintLabel;
+        private System.Windows.Forms.Button copyRestValues;
+        private System.Windows.Forms.ComboBox orderModes;
+        private System.Windows.Forms.CheckBox autoSetDwellWords;
     }
 }

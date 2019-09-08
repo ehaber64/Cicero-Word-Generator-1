@@ -15,6 +15,8 @@ namespace WordGenerator.Controls
         private List<VariableEditor> variableEditors;
         private List<ListEditorPanel> listPanels;
 
+        public enum VariablesOrderingMethods {[Description("Alphabetically")] Alphabetical, [Description("By Creation Time")] Creation };
+
         public VariablesAndListPage()
         {
             InitializeComponent();
@@ -44,6 +46,10 @@ namespace WordGenerator.Controls
             {
                 this.listFillerSelector.Items.Add("List " + (i + 1));
             }
+            if (!Storage.sequenceData.OrderingGroups.ContainsKey(SequenceData.OrderingGroupTypes.Variables))
+                Storage.sequenceData.OrderingGroups.Add(SequenceData.OrderingGroupTypes.Variables, new HashSet<string>());
+            populateSortMethods();
+            sortMethods.SelectedItem = VariablesOrderingMethods.Alphabetical.GetDescription();
         }
 
         public void layout()
@@ -117,6 +123,16 @@ namespace WordGenerator.Controls
         {
             this.variablesPanel.SuspendLayout();
 
+            if (sortVariables.Checked)
+                OrderVariableEditors(sortMethods.SelectedItem as String);
+
+            //Remove all the ordering group labels
+            foreach (Control con in variablesPanel.Controls)
+            {
+                if (con is Label && con.Name.EndsWith("group box"))
+                    variablesPanel.Controls.Remove(con);
+            }
+
             if (Storage.sequenceData == null || Storage.sequenceData.Variables == null)
                 discardAndRefreshAllVariableEditors();
             else
@@ -150,7 +166,7 @@ namespace WordGenerator.Controls
                     }
                 }
 
-                // now we have the correct number of variable editors, lets update them to point at
+                // Now we have the correct number of variable editors, let's update them to point at
                 // the correct variables
                 int j = 0;
                 foreach (Variable var in Storage.sequenceData.Variables)
@@ -161,9 +177,10 @@ namespace WordGenerator.Controls
                         j++;
                     }
                 }
-
             }
-    
+
+            if (orderByGroup.Checked && variableEditors.Count > 0)
+                addGroupLabels();
 
             this.variablesPanel.ResumeLayout();
 
@@ -219,9 +236,6 @@ namespace WordGenerator.Controls
             }
         }
 
-
-
-
         void ved_variableDeleted(object sender, EventArgs e)
         {
             if (sender is VariableEditor)
@@ -240,12 +254,44 @@ namespace WordGenerator.Controls
             }
         }
 
+        /// <summary>
+        /// Adds ordering group labels based on the editors in the current variables panel.
+        /// </summary>
+        private void addGroupLabels()
+        {
+            int spacing = 3;
+            int extraSpacing = 10; //Pixels between each group label and the previous editor
+            int inserted = 0; //Counts the number of group labels added so far
+            Label groupNameBox;
+            String lastGroup = variableEditors[0].getVariable().OrderingGroup + 'a';
+            for (int i = 0; i < variableEditors.Count; i++)
+            {
+                if (variableEditors[i].getVariable().OrderingGroup != lastGroup 
+                    && variableEditors[i].getVariable().OrderingGroup != null)
+                {
+                    groupNameBox = new Label();
+                    groupNameBox.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Bold);
+                    groupNameBox.Name = variableEditors[i].getVariable().OrderingGroup + " group box";
+                    groupNameBox.Size = new Size(variableEditors[i].Width, 17);
+                    groupNameBox.Text = variableEditors[i].getVariable().OrderingGroup;
+                    groupNameBox.Margin = new Padding(spacing, spacing + extraSpacing, spacing, spacing);
+                    variablesPanel.Controls.Add(groupNameBox);
+                    variablesPanel.Controls.SetChildIndex(groupNameBox, i + 2 + inserted);
+                    inserted++;
+                }
+
+                lastGroup = variableEditors[i].getVariable().OrderingGroup;
+            }
+        }
+
+
         private void addButton_Click(object sender, EventArgs e)
         {
-            Variable var = new Variable();
-            var.VariableName = "Var " + (Storage.sequenceData.Variables.Count + 1);
+            int id = Storage.sequenceData.GenerateNewVariableID();
+            Variable var = new Variable(id);
+            var.VariableName = "Var" + id;
             Storage.sequenceData.Variables.Add(var);
-            this.layoutVariables();     
+            this.layoutVariables();
         }
 
         public void tryLockLists()
@@ -543,7 +589,85 @@ namespace WordGenerator.Controls
             setCalibrationSequence(copyOfCurrentSequence);
         }
 
+        private void populateSortMethods()
+        {
+            sortMethods.Items.Clear();
+            Array methods = Enum.GetValues(typeof(VariablesOrderingMethods));
+            foreach (VariablesOrderingMethods method in methods)
+                sortMethods.Items.Add(method.GetDescription());
+        }
 
+        private void sortMethods_DropDown(object sender, EventArgs e)
+        {
+            populateSortMethods();
+        }
 
+        private void sortMethods_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (sortVariables.Checked)
+                layoutVariables();
+        }
+
+        private void sortVariables_CheckedChanged(object sender, EventArgs e)
+        {
+            if (sortVariables.Checked)
+                layoutVariables();
+        }
+
+        /// <summary>
+        /// Sorts the list Storage.sequenceData.Variables according to the input method.
+        /// </summary>
+        /// <param name="method">VariablesOrderingMethods element to use as the sort method.</param>
+        private void OrderVariableEditors(String method)
+        {
+            if (method == VariablesOrderingMethods.Alphabetical.GetDescription())
+                Storage.sequenceData.Variables.Sort((x, y) => x.CompareByAlphabeticalPosition(y, orderByGroup.Checked));
+            else if (method == VariablesOrderingMethods.Creation.GetDescription())
+                Storage.sequenceData.Variables.Sort((x, y) => x.CompareByVariableID(y, orderByGroup.Checked));
+        }
+
+        private void deleteOrderingGroupButton_Click(object sender, EventArgs e)
+        {
+            String groupToDelete = orderingGroupComboBox.SelectedItem as String;
+            Storage.sequenceData.OrderingGroups[SequenceData.OrderingGroupTypes.Variables].Remove(groupToDelete);
+            //For each pulse that used to be in this ordering group, 
+            //set its new ordering group to be null
+            foreach (Variable variable in Storage.sequenceData.Variables)
+            {
+                if (variable.OrderingGroup == groupToDelete)
+                    variable.OrderingGroup = null;
+            }
+
+            orderingGroupComboBox.SelectedItem = null;
+            layout();
+        }
+
+        private void createOrderingGroupButton_Click(object sender, EventArgs e)
+        {
+            Storage.sequenceData.OrderingGroups[SequenceData.OrderingGroupTypes.Variables].Add(orderingGroupTextBox.Text);
+        }
+
+        private void populateOrderingGroupComboBox()
+        {
+            if (Storage.sequenceData != null)
+            {
+                orderingGroupComboBox.Items.Clear();
+                List<String> sortedGroups = new List<String>(Storage.sequenceData.OrderingGroups[SequenceData.OrderingGroupTypes.Variables]);
+                sortedGroups.Sort();
+                foreach (String group in sortedGroups)
+                    orderingGroupComboBox.Items.Add(group);
+            }
+        }
+
+        private void orderingGroupComboBox_DropDown(object sender, EventArgs e)
+        {
+            populateOrderingGroupComboBox();
+        }
+
+        private void orderByGroup_CheckedChanged(object sender, EventArgs e)
+        {
+            if (sortVariables.Checked)
+                layoutVariables();
+        }
     }
 }

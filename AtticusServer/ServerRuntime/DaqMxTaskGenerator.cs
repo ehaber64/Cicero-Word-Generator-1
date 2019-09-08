@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NationalInstruments.DAQmx;
 using DataStructures;
+using System.Windows.Forms;
 
 namespace AtticusServer
 {
@@ -921,7 +922,6 @@ namespace AtticusServer
                 // of the channel which is connected to the nth line of that port. If there is no channel on that port,
                 // the ID is -1.
                 port_digital_IDs = new Dictionary<int, int[]>();
-
                 for (int i = 0; i < digitalIDs.Count; i++)
                 {
                     int digitalID = digitalIDs[i];

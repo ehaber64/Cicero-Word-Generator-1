@@ -28,6 +28,7 @@ namespace WordGenerator.ChannelManager
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.logicalDevSplitContainer = new System.Windows.Forms.SplitContainer();
             this.logicalDevicesDataGridView = new System.Windows.Forms.DataGridView();
             this.deviceTypeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -35,11 +36,21 @@ namespace WordGenerator.ChannelManager
             this.deviceNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.deviceDescColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.deviceHardwareChanColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.deviceGroupColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.deleteDeviceButton = new System.Windows.Forms.Button();
             this.editDeviceButton = new System.Windows.Forms.Button();
             this.addDeviceButton = new System.Windows.Forms.Button();
             this.deviceTypeCombo = new System.Windows.Forms.ComboBox();
             this.lblShowDevice = new System.Windows.Forms.Label();
+            this.orderChannels = new System.Windows.Forms.ComboBox();
+            this.sortByGroup = new System.Windows.Forms.CheckBox();
+            this.deleteOrderingGroupButton = new System.Windows.Forms.Button();
+            this.createOrderingGroupButton = new System.Windows.Forms.Button();
+            this.orderingGroupTextBox = new System.Windows.Forms.TextBox();
+            this.orderingGroupComboBox = new System.Windows.Forms.ComboBox();
+            this.groupControlsLabel = new System.Windows.Forms.Label();
+            this.orderChannelsCheckBox = new System.Windows.Forms.CheckBox();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.logicalDevSplitContainer.Panel1.SuspendLayout();
             this.logicalDevSplitContainer.Panel2.SuspendLayout();
             this.logicalDevSplitContainer.SuspendLayout();
@@ -63,6 +74,14 @@ namespace WordGenerator.ChannelManager
             this.logicalDevSplitContainer.Panel2.Controls.Add(this.addDeviceButton);
             this.logicalDevSplitContainer.Panel2.Controls.Add(this.deviceTypeCombo);
             this.logicalDevSplitContainer.Panel2.Controls.Add(this.lblShowDevice);
+            this.logicalDevSplitContainer.Panel2.Controls.Add(this.orderChannels);
+            this.logicalDevSplitContainer.Panel2.Controls.Add(this.sortByGroup);
+            this.logicalDevSplitContainer.Panel2.Controls.Add(this.deleteOrderingGroupButton);
+            this.logicalDevSplitContainer.Panel2.Controls.Add(this.createOrderingGroupButton);
+            this.logicalDevSplitContainer.Panel2.Controls.Add(this.orderingGroupTextBox);
+            this.logicalDevSplitContainer.Panel2.Controls.Add(this.orderingGroupComboBox);
+            this.logicalDevSplitContainer.Panel2.Controls.Add(this.groupControlsLabel);
+            this.logicalDevSplitContainer.Panel2.Controls.Add(this.orderChannelsCheckBox);
             this.logicalDevSplitContainer.Size = new System.Drawing.Size(842, 573);
             this.logicalDevSplitContainer.SplitterDistance = 695;
             this.logicalDevSplitContainer.TabIndex = 1;
@@ -81,7 +100,8 @@ namespace WordGenerator.ChannelManager
             this.deviceIDColumn,
             this.deviceNameColumn,
             this.deviceDescColumn,
-            this.deviceHardwareChanColumn});
+            this.deviceHardwareChanColumn,
+            this.deviceGroupColumn});
             this.logicalDevicesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.logicalDevicesDataGridView.GridColor = System.Drawing.Color.Black;
             this.logicalDevicesDataGridView.Location = new System.Drawing.Point(0, 0);
@@ -132,6 +152,13 @@ namespace WordGenerator.ChannelManager
             this.deviceHardwareChanColumn.Name = "deviceHardwareChanColumn";
             this.deviceHardwareChanColumn.ReadOnly = true;
             // 
+            // deviceGroupColumn
+            // 
+            this.deviceGroupColumn.FillWeight = 93.27411F;
+            this.deviceGroupColumn.HeaderText = "Ordering Group";
+            this.deviceGroupColumn.Name = "deviceGroupColumn";
+            this.deviceGroupColumn.ReadOnly = true;
+            // 
             // deleteDeviceButton
             // 
             this.deleteDeviceButton.Location = new System.Drawing.Point(8, 122);
@@ -181,6 +208,95 @@ namespace WordGenerator.ChannelManager
             this.lblShowDevice.TabIndex = 0;
             this.lblShowDevice.Text = "Show device type:";
             // 
+            // orderChannels
+            // 
+            this.orderChannels.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.orderChannels.FormattingEnabled = true;
+            this.orderChannels.Location = new System.Drawing.Point(8, 182);
+            this.orderChannels.Name = "orderChannels";
+            this.orderChannels.Size = new System.Drawing.Size(121, 21);
+            this.orderChannels.TabIndex = 16;
+            this.toolTip1.SetToolTip(this.orderChannels, "Select a sorting method for the channels.");
+            this.orderChannels.DropDown += new System.EventHandler(this.orderChannelsComboBox_DropDown);
+            this.orderChannels.SelectedIndexChanged += new System.EventHandler(this.orderChannelsComboBox_SelectedIndexChanged);
+            // 
+            // sortByGroup
+            // 
+            this.sortByGroup.AutoSize = true;
+            this.sortByGroup.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.sortByGroup.Location = new System.Drawing.Point(-4, 285);
+            this.sortByGroup.Name = "sortByGroup";
+            this.sortByGroup.Size = new System.Drawing.Size(135, 17);
+            this.sortByGroup.TabIndex = 16;
+            this.sortByGroup.Text = "Sort channels by group";
+            this.sortByGroup.UseVisualStyleBackColor = true;
+            this.sortByGroup.CheckedChanged += new System.EventHandler(this.sortByGroup_CheckedChanged);
+            // 
+            // deleteOrderingGroupButton
+            // 
+            this.deleteOrderingGroupButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.deleteOrderingGroupButton.Location = new System.Drawing.Point(84, 212);
+            this.deleteOrderingGroupButton.Name = "deleteOrderingGroupButton";
+            this.deleteOrderingGroupButton.Size = new System.Drawing.Size(47, 20);
+            this.deleteOrderingGroupButton.TabIndex = 19;
+            this.deleteOrderingGroupButton.Text = "Delete";
+            this.toolTip1.SetToolTip(this.deleteOrderingGroupButton, "Delete the current ordering group.");
+            this.deleteOrderingGroupButton.UseVisualStyleBackColor = true;
+            this.deleteOrderingGroupButton.Click += new System.EventHandler(this.deleteOrderingGroupButton_Click);
+            // 
+            // createOrderingGroupButton
+            // 
+            this.createOrderingGroupButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.createOrderingGroupButton.Location = new System.Drawing.Point(84, 236);
+            this.createOrderingGroupButton.Name = "createOrderingGroupButton";
+            this.createOrderingGroupButton.Size = new System.Drawing.Size(47, 20);
+            this.createOrderingGroupButton.TabIndex = 21;
+            this.createOrderingGroupButton.Text = "Create";
+            this.toolTip1.SetToolTip(this.createOrderingGroupButton, "Create a new ordering group with the input name.");
+            this.createOrderingGroupButton.UseVisualStyleBackColor = true;
+            this.createOrderingGroupButton.Click += new System.EventHandler(this.createOrderingGroupButton_Click);
+            // 
+            // orderingGroupTextBox
+            // 
+            this.orderingGroupTextBox.Location = new System.Drawing.Point(8, 236);
+            this.orderingGroupTextBox.Name = "orderingGroupTextBox";
+            this.orderingGroupTextBox.Size = new System.Drawing.Size(73, 20);
+            this.orderingGroupTextBox.TabIndex = 20;
+            this.toolTip1.SetToolTip(this.orderingGroupTextBox, "Enter name of new ordering group.");
+            // 
+            // orderingGroupComboBox
+            // 
+            this.orderingGroupComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.orderingGroupComboBox.FormattingEnabled = true;
+            this.orderingGroupComboBox.Location = new System.Drawing.Point(8, 212);
+            this.orderingGroupComboBox.Name = "orderingGroupComboBox";
+            this.orderingGroupComboBox.Size = new System.Drawing.Size(73, 21);
+            this.orderingGroupComboBox.TabIndex = 17;
+            this.toolTip1.SetToolTip(this.orderingGroupComboBox, "Select the ordering group to delete.");
+            this.orderingGroupComboBox.DropDown += new System.EventHandler(this.orderingGroupComboBox_DropDown);
+            // 
+            // groupControlsLabel
+            // 
+            this.groupControlsLabel.AutoSize = true;
+            this.groupControlsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            this.groupControlsLabel.Location = new System.Drawing.Point(0, 163);
+            this.groupControlsLabel.Name = "groupControlsLabel";
+            this.groupControlsLabel.Size = new System.Drawing.Size(144, 13);
+            this.groupControlsLabel.TabIndex = 3;
+            this.groupControlsLabel.Text = "Ordering group controls:";
+            // 
+            // orderChannelsCheckBox
+            // 
+            this.orderChannelsCheckBox.AutoSize = true;
+            this.orderChannelsCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.orderChannelsCheckBox.Location = new System.Drawing.Point(15, 266);
+            this.orderChannelsCheckBox.Name = "orderChannelsCheckBox";
+            this.orderChannelsCheckBox.Size = new System.Drawing.Size(116, 17);
+            this.orderChannelsCheckBox.TabIndex = 16;
+            this.orderChannelsCheckBox.Text = "Order the channels";
+            this.orderChannelsCheckBox.UseVisualStyleBackColor = true;
+            this.orderChannelsCheckBox.CheckedChanged += new System.EventHandler(this.orderChannelsCheckBox_CheckedChanged);
+            // 
             // ChannelManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -189,8 +305,8 @@ namespace WordGenerator.ChannelManager
             this.Controls.Add(this.logicalDevSplitContainer);
             this.Name = "ChannelManager";
             this.Text = "ChannelManager";
-            this.Load += new System.EventHandler(this.ChannelManager_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ChannelManager_FormClosing);
+            this.Load += new System.EventHandler(this.ChannelManager_Load);
             this.logicalDevSplitContainer.Panel1.ResumeLayout(false);
             this.logicalDevSplitContainer.Panel2.ResumeLayout(false);
             this.logicalDevSplitContainer.Panel2.PerformLayout();
@@ -209,11 +325,20 @@ namespace WordGenerator.ChannelManager
         private System.Windows.Forms.DataGridViewTextBoxColumn deviceNameColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn deviceDescColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn deviceHardwareChanColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn deviceGroupColumn;
         private System.Windows.Forms.Button deleteDeviceButton;
         private System.Windows.Forms.Button editDeviceButton;
         private System.Windows.Forms.Button addDeviceButton;
         private System.Windows.Forms.ComboBox deviceTypeCombo;
         private System.Windows.Forms.Label lblShowDevice;
-
+        private System.Windows.Forms.ComboBox orderChannels;
+        private System.Windows.Forms.CheckBox sortByGroup;
+        private System.Windows.Forms.Button deleteOrderingGroupButton;
+        private System.Windows.Forms.Button createOrderingGroupButton;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.TextBox orderingGroupTextBox;
+        private System.Windows.Forms.ComboBox orderingGroupComboBox;
+        private System.Windows.Forms.Label groupControlsLabel;
+        private System.Windows.Forms.CheckBox orderChannelsCheckBox;
     }
 }

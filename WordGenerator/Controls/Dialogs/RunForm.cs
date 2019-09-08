@@ -13,6 +13,7 @@ using System.Net.Sockets;
 using DataStructures.UtilityClasses;
 using DataStructures.Database;
 using DataStructures.Timing;
+using System.Diagnostics;
 
 namespace WordGenerator
 {
@@ -43,6 +44,11 @@ namespace WordGenerator
         private RunFormStatus runFormStatus;
 
         private DateTime formCreationTime;
+
+        public DateTime FormCreationTime
+        {
+            get { return formCreationTime; }
+        }
 
         private bool hasBeenActivated = false;
 
@@ -87,6 +93,17 @@ namespace WordGenerator
                 if (temp)
                     updateErrorDisplay();
             }
+        }
+
+        private bool notLastModeListRun;
+
+        /// <summary>
+        /// Flag that should only be true if this runform belongs to a list mode run and does not belong to the final mode in the list.
+        /// </summary>
+        public bool NotLastModeListRun
+        {
+            get { return notLastModeListRun; }
+            set { notLastModeListRun = value; }
         }
 
 
@@ -180,6 +197,8 @@ namespace WordGenerator
                 MessageBox.Show("Your Cicero Professional Edition (C) License expired on March 31. You are now running a temporary 24 hour STUDENT EDITION license. Please see http://web.mit.edu/~akeshet/www/Cicero/apr1.html for license renewal information.", "License expired -- temporary STUDENT EDITION license.");
             }
 
+            this.NotLastModeListRun = false;
+
             IPAddress lclhst = null;
             IPEndPoint ipe = null;
             CameraPCsSocketList = new List<Socket>();
@@ -244,8 +263,6 @@ namespace WordGenerator
                 fortuneCookieLabel.Text = forts[rand.Next(forts.Count - 1)];
             }
 
-
-
         }
 
         private void registerAllHotkeys()
@@ -297,6 +314,8 @@ namespace WordGenerator
 
             if (runRepeat)
                 abortAfterThis.Visible = true;
+
+            this.NotLastModeListRun = false;
         }
 
         public RunForm(SequenceData sequenceToRun, RunType runType, bool runRepeat, bool isCameraSaving)
@@ -320,6 +339,8 @@ namespace WordGenerator
 
             if (runRepeat)
                 abortAfterThis.Visible = true;
+
+            this.NotLastModeListRun = false;
         }
 
         public void addMessageLogText(object sender, MessageEvent e)
@@ -353,6 +374,8 @@ namespace WordGenerator
             {
                 hasBeenActivated = true;
                 startRun();
+                
+
             }
 
 
@@ -404,6 +427,7 @@ namespace WordGenerator
 
         private void startRun()
         {
+
             // start run! woo hoo!
             // do it async so as not to block the UI thread.
 
@@ -455,6 +479,8 @@ namespace WordGenerator
             }
 
         }
+
+
 
         public bool do_continue_list_run()
         {
@@ -611,6 +637,14 @@ namespace WordGenerator
 
         public bool do_run(int iterationNumber, SequenceData sequence, bool calibrationShot)
         {
+            #region SaveServerSettings
+            string path = Storage.GetSavePathForServer(Storage.settingsData.SecondBackupFilePath, formCreationTime);
+            ServerManager.ServerActionStatus status = Storage.settingsData.serverManager.saveServerSettings(path, addMessageLogText);
+
+            if (status != ServerManager.ServerActionStatus.Success)
+                addMessageLogText(this, new MessageEvent("Failed to save server settings."));
+            #endregion
+
             this.runningThread = Thread.CurrentThread;
             bool keepGoing = true;
             while (keepGoing)
@@ -915,9 +949,8 @@ namespace WordGenerator
                     setStatus(RunFormStatus.FinishedRun);
                     return false;
                 }
-
-
-
+                
+                
                 // send settings data.
                 addMessageLogText(this, new MessageEvent("Sending settings data."));
                 actionStatus = Storage.settingsData.serverManager.setSettingsOnConnectedServers(Storage.settingsData, addMessageLogText);
@@ -928,6 +961,69 @@ namespace WordGenerator
                     setStatus(RunFormStatus.FinishedRun);
                     return false;
                 }
+
+                #region Perform analog input checks and modify sequence if necessary
+                ServerManager.ServerActionStatus aiCheck = Storage.settingsData.serverManager.checkAnalogInputOnConnectedServers(sequence, addMessageLogText);
+
+                Dictionary<AnalogGroup, Dictionary<int, bool>> oldAnalogValues = new Dictionary<AnalogGroup, Dictionary<int, bool>>();
+                Dictionary<GPIBGroup, Dictionary<int, bool>> oldGPIBValues = new Dictionary<GPIBGroup, Dictionary<int, bool>>();
+                Dictionary<TimeStep, Dictionary<int, bool>> oldDigitalValues = new Dictionary<TimeStep, Dictionary<int, bool>>();
+
+                if (aiCheck == ServerManager.ServerActionStatus.Failed_AnalogInCheck)
+                {
+                    DialogResult result = MessageBox.Show("Analog input check failed (see Atticus Event Log for more details). Continue anyway?", "Analog input check failed", MessageBoxButtons.YesNo);
+                    addMessageLogText(this, new MessageEvent("Analog input check failed."));
+                    if (result == DialogResult.No)
+                    {
+                        addMessageLogText(this, new MessageEvent("You have wisely decided to stop the sequence from running."));
+                        ErrorDetected = true;
+                        setStatus(RunFormStatus.FinishedRun);
+                        return false;
+                    }
+                    else if (result == DialogResult.Yes)
+                    {
+                        addMessageLogText(this, new MessageEvent("You have unwisely decided to run the sequence anyway."));
+                        
+                        //Turn off the necessary channels
+                        foreach (AnalogGroup group in sequence.AnalogGroups)
+                        {
+                            oldAnalogValues.Add(group, new Dictionary<int, bool>());
+                            foreach (int id in group.ChannelDatas.Keys)
+                            {
+                                if (Storage.settingsData.ChannelsToTurnOff[HardwareChannel.HardwareConstants.ChannelTypes.analog].ContainsKey(id))
+                                {
+                                    oldAnalogValues[group].Add(id, group.ChannelDatas[id].ChannelEnabled);
+                                    group.ChannelDatas[id].ChannelEnabled = false;
+                                }
+                            }
+                        }
+                        foreach (GPIBGroup group in sequence.GpibGroups)
+                        {
+                            oldGPIBValues.Add(group, new Dictionary<int, bool>());
+                            foreach (int id in group.ChannelDatas.Keys)
+                            {
+                                if (Storage.settingsData.ChannelsToTurnOff[HardwareChannel.HardwareConstants.ChannelTypes.gpib].ContainsKey(id))
+                                {
+                                    oldGPIBValues[group].Add(id, group.ChannelDatas[id].Enabled);
+                                    group.ChannelDatas[id].Enabled = false;
+                                }
+                            }
+                        }
+                        foreach (TimeStep step in sequence.TimeSteps)
+                        {
+                            oldDigitalValues.Add(step, new Dictionary<int, bool>());
+                            foreach (int id in Storage.settingsData.logicalChannelManager.Digitals.Keys)
+                            {
+                                if (Storage.settingsData.ChannelsToTurnOff[HardwareChannel.HardwareConstants.ChannelTypes.digital].ContainsKey(id))
+                                {
+                                    oldDigitalValues[step].Add(id, step.DigitalData[id].ManualValue);
+                                    step.DigitalData[id].ManualValue = false;
+                                }
+                            }
+                        }
+                    }
+                }
+                #endregion
 
                 // send sequence data.
                 addMessageLogText(this, new MessageEvent("Sending sequence data."));
@@ -951,6 +1047,33 @@ namespace WordGenerator
                     return false;
                 }
 
+                #region Now that sequence data has been sent, undo sequence changes if necessary
+                if (aiCheck == ServerManager.ServerActionStatus.Failed_AnalogInCheck)
+                {
+                    //Turn back on the necessary channels
+                    foreach (AnalogGroup group in oldAnalogValues.Keys)
+                    {
+                        foreach (int id in oldAnalogValues[group].Keys)
+                        {
+                            group.ChannelDatas[id].ChannelEnabled = oldAnalogValues[group][id];
+                        }
+                    }
+                    foreach (GPIBGroup group in oldGPIBValues.Keys)
+                    {
+                        foreach (int id in oldGPIBValues[group].Keys)
+                        {
+                            group.ChannelDatas[id].Enabled = oldGPIBValues[group][id];
+                        }
+                    }
+                    foreach (TimeStep step in oldDigitalValues.Keys)
+                    {
+                        foreach (int id in oldDigitalValues[step].Keys)
+                        {
+                            step.DigitalData[id].ManualValue = oldDigitalValues[step][id];
+                        }
+                    }
+                }
+                #endregion
 
                 // arm tasks.
 
@@ -1110,7 +1233,6 @@ namespace WordGenerator
 
 
 
-
                 if (runRepeat)
                     keepGoing = true;
                 else
@@ -1128,6 +1250,13 @@ namespace WordGenerator
                 setStatus(RunFormStatus.FinishedRun);
             }
 
+            //If this isn't the last mode in a list mode run, we need to close the runform window
+            //so that we can move on to the next mode
+            if (NotLastModeListRun)
+            {
+                this.Close();
+                return false;
+            }
 
             return true;
         }
@@ -1198,7 +1327,7 @@ namespace WordGenerator
                     /// it to be about 1 second out of sync with the run.
                     /// However, when reducing the set value of the bar, animation is instant.
                     /// So this code moves the bar forward past the correct point
-                    /// so tha the default code can move it back again (which is instant).
+                    /// so that the default code can move it back again (which is instant).
                     if (WordGenerator.GlobalInfo.usingWindows7)
                     {
                         progressBar.Value = Math.Min(progressBar.Maximum, elapsed_milliseconds + 1);

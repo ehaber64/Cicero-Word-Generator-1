@@ -118,7 +118,7 @@ namespace WordGenerator.Controls
 
                 nameTextBox.Text = currentWaveform.WaveformName;
                 durationParameterEditor.setParameterData(currentWaveform.WaveformDuration);
-
+                numSamples.Value = currentWaveform.NumSamples;
             }
             else
             {
@@ -872,6 +872,9 @@ namespace WordGenerator.Controls
 
         }
 
-        
+        private void numSamples_ValueChanged(object sender, EventArgs e)
+        {
+            CurrentWaveform.NumSamples = (int)this.numSamples.Value;
+        }
     }
 }

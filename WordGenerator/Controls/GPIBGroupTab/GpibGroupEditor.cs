@@ -149,6 +149,7 @@ namespace WordGenerator.Controls
             layoutGraphCollection();
             waveformEditor1.setWaveform(null);
             descBox.Text = gpibGroup.GroupDescription;
+            gpibGroup.UserGPIBGroup = true;
 
             replacementGroupSelector.SelectedItem = null;
 
@@ -239,7 +240,10 @@ namespace WordGenerator.Controls
             if (Storage.sequenceData != null)
             {
                 foreach (GPIBGroup gg in Storage.sequenceData.GpibGroups)
-                    gpibGroupSelector.Items.Add(gg);
+                {
+                    if (gg.UserGPIBGroup == true)
+                    { gpibGroupSelector.Items.Add(gg); }
+                }
             }
 
         }
@@ -440,6 +444,18 @@ namespace WordGenerator.Controls
 
         }
 
+        public void ActivateGraph(string channelName)
+        {
+            //Run through each graph in the collection, and once the one with the correct
+            //channel name is found, 'click' on it
+            foreach (WaveformGraph graph in waveformGraphCollection1.WaveformGraphs)
+            {
+                if (graph.Controls[0].Text == channelName)
+                {
+                    waveformGraphCollection1.WaveformGraphCollection_gotClicked(graph, new EventArgs());
+                }
+            }
+        }
 
     }
 }

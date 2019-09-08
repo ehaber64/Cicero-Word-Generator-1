@@ -62,6 +62,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SequenceData\ModeControl.cs" />
+    <Compile Include="SequenceData\ModeList.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="DataStructuresVersionNumber.cs" />
     <Compile Include="ClientStartupSettings.cs" />

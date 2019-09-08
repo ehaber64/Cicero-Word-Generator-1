@@ -21,6 +21,8 @@ namespace WordGenerator.Controls
 
         public event EventHandler<MessageEvent> messageLog;
 
+        public enum ModeOrderingMethods {[Description("Alphabetically")] Alphabetical, [Description("By Creation Time")] Creation };
+
         public TimestepEditor getTimestepEditor(TimeStep timeStep)
         {
             foreach (Control con in timeStepsFlowPanel.Controls)
@@ -69,6 +71,14 @@ namespace WordGenerator.Controls
                 if (created)
                     layoutTimestepEditors();
             }
+        }
+
+        /// <summary>
+        /// Returns whether or not the autoSetDwellWords checkbox is checked.
+        /// </summary>
+        public bool AutoSetDwellWords
+        {
+            get { return autoSetDwellWords.Checked; }
         }
 
         public SequencePage()
@@ -525,7 +535,7 @@ namespace WordGenerator.Controls
         public void scrollToFrac(double frac, ScrollProperties prop)
         {
             int temp = (int) (prop.Minimum + frac * (double)(prop.Maximum - prop.Minimum - prop.LargeChange));
-            // I have no idea why this shit is necessary, but the scrollbar value property is Lazy!. Sometimes its value 
+            // I have no idea why this shit is necessary, but the scrollbar value property is Lazy! Sometimes its value 
             // doesn't change even when you set it. Kludge solution, attempt to set it 10 times. If it still doesn't work, give up
             // (we don't want to enter an infinite loop)
             for (int i = 0; i < 10; i++)
@@ -917,18 +927,22 @@ namespace WordGenerator.Controls
 
         private void createMode_Click(object sender, EventArgs e)
         {
-            SequenceMode newMode = SequenceMode.createSequenceMode(Storage.sequenceData);
+            int id = Storage.sequenceData.GenerateNewModeID();
+            SequenceMode newMode = SequenceMode.createSequenceMode(id, Storage.sequenceData);
             Storage.sequenceData.SequenceModes.Add(newMode);
+            //Add this mode to the dictionary of pulses
+            Storage.sequenceData.NewPulses.Add(newMode, new HashSet<Pulse>());
+            Storage.sequenceData.ModeReferences.Add(newMode, new HashSet<SequenceMode>());
             Storage.sequenceData.CurrentMode = newMode;
-            newMode.ModeName = "New Mode";
+            newMode.ModeName = "Mode" + id;
             layoutTheRest();
         }
 
-        private void storeMode_Click(object sender, EventArgs e)
+        public void storeMode_Click(object sender, EventArgs e)
         {
             if (Storage.sequenceData.CurrentMode != null)
             {
-                SequenceMode newMode = SequenceMode.createSequenceMode(Storage.sequenceData);
+                SequenceMode newMode = SequenceMode.createSequenceMode(Storage.sequenceData.CurrentMode.ID, Storage.sequenceData);
                 Storage.sequenceData.CurrentMode.ModeName = modeTextBox.Text;
                 Storage.sequenceData.CurrentMode.TimestepEntries = newMode.TimestepEntries;
                 layoutTheRest();
@@ -944,7 +958,16 @@ namespace WordGenerator.Controls
                     DialogResult res = MessageBox.Show("Delete mode?", "Are you sure you want to delete this mode?", MessageBoxButtons.YesNo);
                     if (res == DialogResult.Yes)
                     {
+                        //Remove the pulses that belong to this mode
+                        MainClientForm.instance.pulsesPage.RemovePulsesFromMode(Storage.sequenceData.CurrentMode);
+
+                        //Remove mode from dictionary of new pulses
+                        Storage.sequenceData.NewPulses.Remove(Storage.sequenceData.CurrentMode);
+                        Storage.sequenceData.ModeReferences.Remove(Storage.sequenceData.CurrentMode);
+
+                        //And finally destroy the mode
                         Storage.sequenceData.SequenceModes.Remove(Storage.sequenceData.CurrentMode);
+                        Storage.sequenceData.RemoveModeID(Storage.sequenceData.CurrentMode.ID);
                         Storage.sequenceData.CurrentMode = null;
                         layoutTheRest();
                     }
@@ -962,7 +985,22 @@ namespace WordGenerator.Controls
             Invoke(setItem);
         }
 
-        private void modeBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void populateModeComboBox()
+        {
+            if (Storage.sequenceData != null)
+            {
+                modeBox.Items.Clear();
+                foreach (SequenceMode mode in Storage.sequenceData.SequenceModes)
+                    modeBox.Items.Add(mode);
+            }
+        }
+
+        private void modeComboBox_DropDown(object sender, EventArgs e)
+        {
+            populateModeComboBox();
+        }
+
+        public void modeBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.InvokeRequired)
             {
@@ -990,15 +1028,121 @@ namespace WordGenerator.Controls
             }
         }
 
+        /// <summary>
+        /// Deep copies rest values timestep (the first timestep in the sequence) to the output now timestep. If the second step is not named output now, then it creates the timestep before copying.
+        /// </summary>
+        private void copyRestValues_Click(object sender, EventArgs e)
+        {
+            //Check if there is even a rest values timestep to copy
+            if (Storage.sequenceData != null && Storage.sequenceData.TimeSteps.Count >= 1)
+            {
+                //Check if we need to create an output now timestep
+                if (Storage.sequenceData.TimeSteps.Count == 1 || Storage.sequenceData.TimeSteps[1].StepName != "Output now")
+                { Storage.sequenceData.TimeSteps.Insert(1, new TimeStep("Output now")); }
+                //Now that an output now timestep definetely exists, it's time to copy over the first timestep
+                TimeStep restValues = Storage.sequenceData.TimeSteps[0];
+                TimeStep outputNow = Storage.sequenceData.TimeSteps[1];
+                //Copy over everything except the name of the timestep
+                outputNow.StepEnabled = restValues.StepEnabled;
+                outputNow.StepHidden = restValues.StepHidden;
+                outputNow.StepDuration = new DimensionedParameter(restValues.StepDuration);
+                //Deep copy each digital data point
+                outputNow.DigitalData = new Dictionary<int, DigitalDataPoint>();
+                foreach (int id in restValues.DigitalData.Keys)
+                { outputNow.DigitalData.Add(id, new DigitalDataPoint(restValues.DigitalData[id])); }
+                //If rest values contains an analog group, either copy its parameters to the output now
+                //analog group, if it exists, or create such a group and then copy
+                if (restValues.AnalogGroup != null)
+                {
+                    if (outputNow.AnalogGroup == null)
+                    {
+                        outputNow.AnalogGroup = new AnalogGroup(-1, "");
+                        Storage.sequenceData.AnalogGroups.Add(outputNow.AnalogGroup);
+                    }
+                    outputNow.AnalogGroup.Copy(restValues.AnalogGroup);
+                    outputNow.AnalogGroup.GroupName = outputNow.StepName;
+                }
+                else
+                { outputNow.AnalogGroup = null; }
+                //If rest values contains a GPIB group, either copy its parameters to the output now
+                //GPIB group, if it exists, or create such a group and then copy
+                if (restValues.GpibGroup != null)
+                {
+                    if (outputNow.GpibGroup == null)
+                    {
+                        outputNow.GpibGroup = new GPIBGroup("");
+                        Storage.sequenceData.GpibGroups.Add(outputNow.GpibGroup);
+                    }
+                    outputNow.GpibGroup.Copy(restValues.GpibGroup);
+                    outputNow.GpibGroup.GroupName = outputNow.StepName;
+                }
+                else
+                { outputNow.GpibGroup = null; }
+                //Refresh the UI so that the changes appear
+                MainClientForm.instance.RefreshSequenceDataToUI();
+            }
+        }
 
+        /// <summary>
+        /// Allows methods in other classes to hide/un-hide timesteps.
+        /// </summary>
+        public void HideTimesteps(bool check)
+        {
+            hideHiddenTimestepsCheckbox.Checked = check;
+            checkBox1_CheckedChanged(new object(), new EventArgs());
+        }
 
+        /// <summary>
+        /// Allows methods in other classes to change the sequence mode.
+        /// </summary>
+        /// <param name="mode"></param>
+        public void SelectMode(SequenceMode mode)
+        {
+            modeBox.SelectedItem = mode;
+            modeBox_SelectedIndexChanged(new object(), new EventArgs());
+        }
 
+        private void runControl1_Load(object sender, EventArgs e)
+        {
 
+        }
 
+        private void populateOrderModesComboBox()
+        {
+            if (Storage.sequenceData != null)
+            {
+                orderModes.Items.Clear();
+                Array methods = Enum.GetValues(typeof(ModeOrderingMethods));
+                foreach (ModeOrderingMethods method in methods)
+                    orderModes.Items.Add(method.GetDescription());
+            }
+        }
 
+        private void orderModesComboBox_DropDown(object sender, EventArgs e)
+        {
+            populateOrderModesComboBox();
+        }
 
+        private void orderModesComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            OrderModeList(orderModes.SelectedItem as String);
+        }
 
+        /// <summary>
+        /// Sorts the list Storage.sequenceData.SequenceModes according to the input method.
+        /// </summary>
+        /// <param name="method">ModeOrderingMethods element to use as the sort method.</param>
+        private void OrderModeList(String method)
+        {
+            if (method == ModeOrderingMethods.Alphabetical.GetDescription())
+                Storage.sequenceData.SequenceModes.Sort(SequenceMode.CompareByAlphabeticalPosition);
+            else if (method == ModeOrderingMethods.Creation.GetDescription())
+                Storage.sequenceData.SequenceModes.Sort(SequenceMode.CompareByModeID);
+        }
 
+        private void autoSetDwellWords_CheckedChanged(object sender, EventArgs e)
+        {
 
+        }
     }
 }

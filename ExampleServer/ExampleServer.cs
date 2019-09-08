@@ -105,6 +105,15 @@ namespace Virgil
             
         }
 
+        public override BufferGenerationStatus CheckAnalogInput(SequenceData sequence)
+        {
+            return new BufferGenerationStatus();
+        }
+
+        public override void SaveServerSettings(string path)
+        {
+            
+        }
 
         #endregion
 

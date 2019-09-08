@@ -6,6 +6,7 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using DataStructures;
+using System.Diagnostics;
 
 namespace WordGenerator.Controls
 {
@@ -308,7 +309,11 @@ namespace WordGenerator.Controls
             analogSelector.Items.Clear();
             analogSelector.BackColor = Color.White;
             analogSelector.Items.Add("Continue");
-            analogSelector.Items.AddRange(Storage.sequenceData.AnalogGroups.ToArray());
+            foreach(AnalogGroup group in Storage.sequenceData.AnalogGroups)
+            {
+                if(group.UserAnalogGroup)
+                { analogSelector.Items.Add(group); }
+            }
         }
 
         private object analogSelectorBackupItem;
@@ -368,7 +373,11 @@ namespace WordGenerator.Controls
             gpibSelector.Items.Clear();
             gpibSelector.BackColor = Color.White;
             gpibSelector.Items.Add("Continue");
-            gpibSelector.Items.AddRange(Storage.sequenceData.GpibGroups.ToArray());
+            foreach (GPIBGroup group in Storage.sequenceData.GpibGroups)
+            {
+                if (group.UserGPIBGroup)
+                { gpibSelector.Items.Add(group); }
+            }
         }
 
         private void outputNowToolStripMenuItem_Click(object sender, EventArgs e)

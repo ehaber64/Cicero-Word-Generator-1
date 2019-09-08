@@ -9,6 +9,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Diagnostics;
 
 namespace WordGenerator
 {
@@ -152,7 +153,7 @@ namespace WordGenerator
         public void activateAnalogGroupEditor(AnalogGroup ag)
         {
             this.analogGroupEditor.setAnalogGroup(ag);
-            this.mainTab.SelectedIndex = 1;
+            this.mainTab.SelectedIndex = 2;
 
 
         }
@@ -160,13 +161,13 @@ namespace WordGenerator
         public void activateGPIBGroupEditor(GPIBGroup gg)
         {
             this.gpibGroupEditor.setGpibGroup(gg);
-            this.mainTab.SelectedIndex = 2;
+            this.mainTab.SelectedIndex = 3;
         }
 
         public void activateRS232GroupEditor(RS232Group rg)
         {
             this.rS232GroupEditor.setRS232Group(rg);
-            this.mainTab.SelectedIndex = 3;
+            this.mainTab.SelectedIndex = 4;
         }
 
         public void updateFormTitle()
@@ -229,7 +230,6 @@ namespace WordGenerator
 
                 // Load all necessary data into Storage
                 Storage.SaveAndLoad.LoadAllSubclasses(clientStartupSettingsFile);
-
             }
             else
             {
@@ -238,9 +238,23 @@ namespace WordGenerator
                 Storage.settingsData = runLog.RunSettings;
             }
 
+            #region Maintain backwards compatibility with older versions of Cicero
+            //Load old digital pulses by making them visible in each mode and setting their type
+            if (Storage.sequenceData.NewPulses.Count == 0)
+            {
+                HashSet<Pulse> pulses = new HashSet<Pulse>(Storage.sequenceData.DigitalPulses);
+                foreach (Pulse pulse in pulses)
+                {
+                    pulse.Visible = true;
+                    pulse.pulseType = Pulse.PulseType.OldDigital;
+                }
+                foreach (SequenceMode mode in Storage.sequenceData.SequenceModes)
+                    Storage.sequenceData.NewPulses.Add(mode, pulses);
+            }
+            #endregion
 
             InitializeComponent();
-
+            
 #if DEBUG
             debugToolStripMenuItem.Visible = true;
 #endif
@@ -268,9 +282,8 @@ namespace WordGenerator
 	            RegisterHotKey(Handle, hotKeyBindings.Count, KeyModifiers.None, Keys.F11);
 	            hotKeyBindings.Add(this.serverManagerButton);
 
-
+                
 	            // bind F1 to F8 to appropriate tab pages
-
 	            RegisterHotKey(Handle, hotKeyBindings.Count, KeyModifiers.None, Keys.F1);
 	            hotKeyBindings.Add(this.sequenceTab);
 
@@ -314,6 +327,15 @@ namespace WordGenerator
                 cif.ShowDialog();
                 Storage.clientStartupSettings.HasShownCitationMessage = true;
             }
+
+            foreach (TabPage page in mainTab.TabPages)
+            {
+                page.AutoScroll = true;
+                page.AutoScrollMargin = new Size(20, 20);
+                page.AutoScrollMinSize = new Size(page.Width, page.Height);
+            }
+
+            OpenAtticus();
         }
 
         void citationItem_Click(object sender, EventArgs e)
@@ -327,7 +349,7 @@ namespace WordGenerator
         public MainClientForm()
             : this(null)
         {
-
+            
         }
 
         /// <summary>
@@ -398,7 +420,6 @@ namespace WordGenerator
             try
             {
                 lic_chk();
-
 
                 this.commonWaveformEditor.setCommonWaveforms(Storage.sequenceData.CommonWaveforms);
 
@@ -482,6 +503,8 @@ namespace WordGenerator
                 this.sequencePage.layoutSettingsData();
                 this.sequencePage.updateOverrideCount();
                 this.useNetworkClockCheckBox.Checked = settingsData.AlwaysUseNetworkClock;
+                this.openAtticusUponStartup.Checked = settingsData.TryToOpenAtticusOnStartup;
+                this.savePathBox.Text = settingsData.SecondBackupFilePath;
 
                 setTimestepEditorBackgrounds();
             }
@@ -503,7 +526,7 @@ namespace WordGenerator
         }
         private void saveSettingsDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Storage.SaveAndLoad.SaveSettingsData(AppDomain.CurrentDomain.BaseDirectory + Storage.clientStartupSettings.settingsDataFileName);
+            Storage.SaveAndLoad.SaveSettingsData(AppDomain.CurrentDomain.BaseDirectory + Storage.clientStartupSettings.settingsDataFileName, true);
         }
         private void saveSequenceDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -564,6 +587,12 @@ namespace WordGenerator
 
         }
 
+        private void onlySaveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Storage.SaveAndLoad.SaveSequenceData(MainClientForm.instance.OpenSequenceFileName);
+            RefreshRecentFiles();
+        }
+
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Storage.SaveAndLoad.SaveSequenceData(null);
@@ -583,17 +612,20 @@ namespace WordGenerator
             }
         }
 
+        private void onlySaveSettings_Click(object sender, EventArgs e)
+        {
+            Storage.SaveAndLoad.SaveSettingsData(MainClientForm.instance.OpenSettingsFileName, true);
+        }
+
         private void saveSettings_Click(object sender, EventArgs e)
         {
-            Storage.SaveAndLoad.SaveSettingsData(null);
+            Storage.SaveAndLoad.SaveSettingsData(null, true);
         }
 
         private void loadDefaultSettings_Click(object sender, EventArgs e)
         {
             if (Storage.SaveAndLoad.LoadSettingsData(FileNameStrings.DefaultClientSettingsDataFile))
             {
-
-
                 RefreshSettingsDataToUI();
                 this.handleMessageEvent(this, new MessageEvent("Loaded default settings from " + this.openSettingsFileName));
             }
@@ -601,7 +633,7 @@ namespace WordGenerator
 
         private void saveDefaultSettings_Click(object sender, EventArgs e)
         {
-            Storage.SaveAndLoad.SaveSettingsData(AppDomain.CurrentDomain.BaseDirectory + FileNameStrings.DefaultClientSettingsDataFile);
+            Storage.SaveAndLoad.SaveSettingsData(AppDomain.CurrentDomain.BaseDirectory + FileNameStrings.DefaultClientSettingsDataFile, true);
         }
 
         private void mainClientForm_Load(object sender, EventArgs e)
@@ -635,7 +667,7 @@ namespace WordGenerator
 
             if (!e.Handled)
             {
-                System.Console.WriteLine("blah");
+
             }
 
         }
@@ -1041,7 +1073,7 @@ namespace WordGenerator
                 DialogResult res3 = MessageBox.Show("Save settings?", "", MessageBoxButtons.YesNo);
                 if (res3 == DialogResult.Yes)
                 {
-                    Storage.SaveAndLoad.SaveSettingsData(null);
+                    Storage.SaveAndLoad.SaveSettingsData(null, true);
                 }
             }
 
@@ -1058,7 +1090,7 @@ namespace WordGenerator
 
             SequenceData saveMe = new SequenceData(markedSteps);
 
-            Storage.SaveAndLoad.SaveSequenceData(null, saveMe);
+            Storage.SaveAndLoad.SaveSequenceData(null, saveMe, true);
         }
 
         private List<TimeStep> markedTimesteps()
@@ -1568,5 +1600,162 @@ namespace WordGenerator
             cif.ShowDialog();
         }
 
+        public void UpdateMode(SequenceMode mode)
+        {
+            if (Storage.sequenceData.CurrentMode != null)
+            {
+                //Update dictionary of pulses
+                HashSet<Pulse> pulses = Storage.sequenceData.NewPulses[Storage.sequenceData.CurrentMode];
+                Storage.sequenceData.NewPulses.Remove(Storage.sequenceData.CurrentMode);
+                //Update the mode
+                SequenceMode newMode = SequenceMode.createSequenceMode(Storage.sequenceData.GenerateNewModeID(), Storage.sequenceData);
+                Storage.sequenceData.CurrentMode.ModeName = mode.ModeName;
+                Storage.sequenceData.CurrentMode.TimestepEntries = newMode.TimestepEntries;
+                this.sequencePage.layoutTheRest();
+                //Add the new mode to the dictionary
+                Storage.sequenceData.NewPulses[Storage.sequenceData.CurrentMode] = pulses;
+            }
+        }
+
+        /// <summary>
+        /// Will try to open Atticus using the file path saved in the Atticus settings data,
+        /// if this fails then it will ask the user if they would like to specify the path.
+        /// </summary>
+        private void OpenAtticus()
+        {
+            Process[] Atticuses = Process.GetProcessesByName("AtticusServer");
+            //Try to open Atticus only if there are no other AtticusServer.exe already running
+            if (Storage.settingsData.TryToOpenAtticusOnStartup && (Atticuses.Length == 0))
+            {
+                //First try opening the Atticus file using the file path in memory
+                try
+                {
+                    Process.Start(Storage.settingsData.AtticusFilePath);
+                }
+                catch
+                {   //If that fails then ask the user if they would like to find it themselves
+                    DialogResult result = MessageBox.Show("Could not open Atticus with the path stored in memory. Would you like to find it manually?", "Could not locate Atticus", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.Yes)
+                    {   //If they say yes then open a dialog box for them to search for the file
+                        OpenFileDialog openFileDialog = new OpenFileDialog();
+                        openFileDialog.Title = "Find Atticus";
+                        openFileDialog.Filter = "Application (*.exe)|*.exe";
+                        result = openFileDialog.ShowDialog();
+                        if (result == DialogResult.OK)
+                        {   //Take the .exe file they found and try to open it
+                            try
+                            {
+                                Process.Start(openFileDialog.FileName);
+                                //Since it opened save the file path in memory for the future.
+                                Storage.settingsData.AtticusFilePath = openFileDialog.FileName;
+                            }
+                            catch (Exception e)
+                            {
+                                MessageBox.Show("Unable to open file, the following exception occurred: " + e.ToString());
+                            }
+                        }
+                    }
+                    else //If the user didn't try to find Atticus, ask if they want Cicero to try and find 
+                         //Atticus in the future upon opening.
+                    {
+                        result = MessageBox.Show("In the future do you want Cicero to try and open Atticus upon startup? This setting can later be changed within the Cicero UI.", "Try to open Atticus in the future?", MessageBoxButtons.YesNo);
+                        if (result == DialogResult.No)
+                        {
+                            Storage.settingsData.TryToOpenAtticusOnStartup = false;
+                            openAtticusUponStartup.Checked = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        public void openAtticusUponStartup_CheckedChanged(object sender, EventArgs e)
+        {
+            if (Storage.settingsData != null)
+            { Storage.settingsData.TryToOpenAtticusOnStartup = openAtticusUponStartup.Checked; }
+        }
+
+        private void saveSettingsButton_Click(object sender, EventArgs e)
+        {
+            Storage.SavePulseData(Storage.settingsData.SecondBackupFilePath, DateTime.Now);
+        }
+
+        private void savePathButton_Click(object sender, EventArgs e)
+        {
+            string savePath = PromptUserForSavePath();
+            if (savePath != null)
+            {
+                Storage.settingsData.SecondBackupFilePath = savePath;
+                savePathBox.Text = Storage.settingsData.SecondBackupFilePath;
+            }
+        }
+
+        /// <summary>
+        /// Opens a folder dialog box so the user can select a directory for saving the Cicero settings in.
+        /// </summary>
+        /// <returns>A path pointing to the new folder CiceroBackupSettings (or null if the user refused).</returns>
+        public static string PromptUserForSavePath()
+        {
+            string savePath = null;
+            FolderBrowserDialog openFolderDialog = new FolderBrowserDialog();
+            openFolderDialog.Description = "Find folder to save backup settings in";
+            DialogResult result = openFolderDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                savePath = openFolderDialog.SelectedPath;
+                savePath = Path.Combine(savePath, "CiceroBackupSettings");
+                Directory.CreateDirectory(savePath);
+            }
+
+            return savePath;
+        }
+
+        private void MainClientForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            e.Handled = false;
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            //If the user has opened up the Run Modes tab, has clicked on an editor, and
+            //isn't entering text into any of the textboxes, then check if they used a 
+            //shortcut key combination
+            if (mainTab.SelectedIndex == 9 && instance.runModesLists.CurrentEditor != null && !instance.runModesLists.CurrentEditor.ListName.Focused && !instance.runModesLists.CurrentEditor.ListDescription.Focused)
+            {
+                instance.runModesLists.CurrentEditor.ClickButton(keyData);
+                return true;
+            }
+            
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+
+
+        public TextBox SavePathBox
+        {
+            get { return savePathBox; }
+            set { savePathBox = value; }
+        }
+
+        private void mainTab_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (mainTab.SelectedIndex == 9)
+            {
+                //If the user clicked on the runModes tab, let's delete all of the
+                //buttons that belong to modes that the user has deleted
+                List<Button> buttonsToDelete;
+                foreach (Controls.RunModesTab.ModeListEditor editor in instance.runModesLists.ModeListEditors)
+                {
+                    buttonsToDelete = new List<Button>();
+                    foreach (KeyValuePair<Button, ModeControl> kvp in editor.ModeButtons)
+                    {
+                        if (!Storage.sequenceData.SequenceModes.Contains(kvp.Value.Mode))
+                            buttonsToDelete.Add(kvp.Key);
+                    }
+                    foreach (Button button in buttonsToDelete)
+                        editor.DeleteInputButton(button);
+                }
+            }
+        }
     }
 }

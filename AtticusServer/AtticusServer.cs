@@ -58,11 +58,11 @@ namespace AtticusServer
 
                 try
                 {
-                    serverSettings = loadServerSettings(serverSettingsFilesName);
+                    serverSettings = loadServerSettings(Path.GetDirectoryName(Application.ExecutablePath) + '\\' + serverSettingsFilesName);
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Exception when attempting to load server settings.");
+                    Console.WriteLine("Exception when attempting to load server settings: " + e.Message);
                     Console.WriteLine("Proceeding with blank settings.");
                     serverSettings = new ServerSettings();
                 }

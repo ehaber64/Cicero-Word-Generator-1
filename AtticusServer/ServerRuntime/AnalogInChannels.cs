@@ -251,6 +251,40 @@ namespace AtticusServer
             set { useChannel = value; }
         }
 
+        private bool doComparison = false;
+        /// <summary>
+        /// If true then Atticus will, before the sequence runs, compare this channel to its ComparisonValue and warn the user if the test fails.
+        /// </summary>
+        public bool DoComparison
+        {
+            get { return doComparison; }
+            set { doComparison = value; }
+        }
+
+        // If doComparison = true, then sequence will only run if comparisonValue (defined below)
+        // satisfies (channel value) ComparisonType (ComparisonValue) 
+        public enum ComparisonTypeList { Greater, Less, GreaterOrEqual,LessOrEqual };
+        private ComparisonTypeList comparisonType;
+        
+        /// <summary>
+        /// If doComparison is true then the sequence will only run if the following is true: (channel value) ComparisonType (ComparisonValue)
+        /// </summary>
+        public ComparisonTypeList ComparisonType
+        {
+            get { return comparisonType; }
+            set { comparisonType = value; }
+        }
+
+        private double comparisonValue = 0;
+        /// <summary>
+        /// Value that the AI channel's current value will be compared to.
+        /// </summary>
+        public double ComparisonValue
+        {
+            get { return comparisonValue; }
+            set { comparisonValue = value; }
+        }
+
         public AnalogInChannels()
         {
             #region OldCode

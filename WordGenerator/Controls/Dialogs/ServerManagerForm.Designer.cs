@@ -31,6 +31,7 @@ namespace WordGenerator
             this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
             this.button1 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.stopPing = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // propertyGrid1
@@ -50,6 +51,16 @@ namespace WordGenerator
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // stopPing
+            // 
+            this.stopPing.Location = new System.Drawing.Point(12, 430);
+            this.stopPing.Name = "stopPing";
+            this.stopPing.Size = new System.Drawing.Size(118, 69);
+            this.stopPing.TabIndex = 1;
+            this.stopPing.Text = "Stop pinging server";
+            this.stopPing.UseVisualStyleBackColor = true;
+            this.stopPing.Click += new System.EventHandler(this.stopPing_Click);
+            // 
             // textBox1
             // 
             this.textBox1.Location = new System.Drawing.Point(140, 304);
@@ -68,6 +79,7 @@ namespace WordGenerator
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.propertyGrid1);
+            this.Controls.Add(this.stopPing);
             this.Name = "ServerManagerForm";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
@@ -82,5 +94,6 @@ namespace WordGenerator
         private System.Windows.Forms.PropertyGrid propertyGrid1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Button stopPing;
     }
 }

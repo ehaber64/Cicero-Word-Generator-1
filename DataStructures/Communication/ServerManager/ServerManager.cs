@@ -8,6 +8,7 @@ using System.Runtime.Remoting;
 using System.Runtime.Serialization;
 using System.Reflection;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace DataStructures
 {
@@ -278,7 +279,6 @@ namespace DataStructures
                 // try to create the communicator
                 try
                 {
-
                     Thread connectThread = new Thread(new ParameterizedThreadStart(server_connect_proc));
                     connectThread.Start(server);
 
@@ -382,31 +382,64 @@ namespace DataStructures
                 Thread pingThread = new Thread(new ParameterizedThreadStart(ping_server_proc));
                 pingThread.Start(comm);
                 pingThread.Join(1000);
-                if (pingThread.ThreadState == ThreadState.Running)
+                while (pingThread.ThreadState == ThreadState.Running && !StopPing)
                 {
-                    if (messageLog != null)
-                        messageLog(this, new MessageEvent("Server ping took longer than 1000ms. Aborting."));
-                    
+                    pingThread.Join(1000);
+                }
+                if (pingThread.ThreadState != ThreadState.Stopped)
+                {
+                    messageLog(this, new MessageEvent("Server ping failed."));
                     pingThread.Abort();
-
                     return false;
                 }
-                
+
+                //pingThread.Join(1000);
+                //if (pingThread.ThreadState == ThreadState.Running)
+                //{
+                //    if (messageLog != null)
+                //        messageLog(this, new MessageEvent("Server ping took longer than 1000ms. Aborting."));
+                //    
+                //    pingThread.Abort();
+                //
+                //    return false;
+                //}
+
+
             }
             catch (Exception e)
             {
-                if (messageLog != null)
-                    messageLog(this, new MessageEvent("Caught exception when attempting to ping server " + server.ToString() + ": " + e.Message + e.StackTrace));
+                messageLog?.Invoke(this, new MessageEvent("Caught exception when attempting to ping server " + server.ToString() + ": " + e.Message + e.StackTrace));
                 return false;
             }
 
             return true;
         }
 
+        private bool stopPing;
+
+        public bool StopPing
+        {
+            get { return stopPing; }
+            set { stopPing = value; }
+        }
+
         private static void ping_server_proc(object obj)
         {
+            bool success = false;
             ServerCommunicator comm = (ServerCommunicator)obj;
-            comm.ping();
+            while (!success)
+            {
+                try
+                {
+                    comm.ping();
+                    success = true;
+                }
+                catch (Exception e)
+                {   //If the user is trying to exit then we should let them. Otherwise, continue looping.
+                    if (e.ToString() == "Thread was being aborted.")
+                    { success = true; }
+                }
+            }
         }
 
         private void serverGotDisconnectedInError(ServerInfo server) {
@@ -416,7 +449,7 @@ namespace DataStructures
             connections[server] = ConnectionStatus.Disconnected_Error;
         }
 
-        public enum ServerActionStatus { Success, Failed_No_Connection, Failed_Loss_Of_Connection, Failed_On_Server };
+        public enum ServerActionStatus { Success, Failed_No_Connection, Failed_Loss_Of_Connection, Failed_On_Server, Failed_AnalogInCheck };
 
 
 
@@ -482,6 +515,8 @@ namespace DataStructures
                 ServerCommunicator.BufferGenerationStatus bufferStatus = (ServerCommunicator.BufferGenerationStatus) returnValue;
                 if (bufferStatus == ServerCommunicator.BufferGenerationStatus.Success)
                     return ServerActionStatus.Success;
+                else if (bufferStatus == ServerCommunicator.BufferGenerationStatus.Failed_AnalogInCheck)
+                    return ServerActionStatus.Failed_AnalogInCheck;
                 return ServerActionStatus.Failed_On_Server;
             }
 
@@ -681,6 +716,16 @@ namespace DataStructures
         public ServerActionStatus outputRS232GroupOnConnectedServers(RS232Group rs232Group, SettingsData settings, EventHandler<MessageEvent> messageLog)
         {
             return runNamedMethodOnConnectedServers("outputRS232Group", new object[] { rs232Group, settings }, 4000, messageLog);
+        }
+
+        public ServerActionStatus checkAnalogInputOnConnectedServers(SequenceData sequence, EventHandler<MessageEvent> messageLog)
+        {
+            return runNamedMethodOnConnectedServers("CheckAnalogInput", new object[] { sequence }, 4000, messageLog);
+        }
+
+        public ServerActionStatus saveServerSettings(string path, EventHandler<MessageEvent> messageLog)
+        {
+            return runNamedMethodOnConnectedServers("SaveServerSettings", new object[] { path }, 4000, messageLog);
         }
 
         private ServerActionStatus verifyConnection(ServerInfo server)

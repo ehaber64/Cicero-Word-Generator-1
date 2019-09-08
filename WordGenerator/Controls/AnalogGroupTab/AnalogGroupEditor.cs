@@ -18,6 +18,8 @@ namespace WordGenerator.Controls
 
         private List<GroupChannelSelection> groupChannelSelectors;
 
+        public enum GroupOrderingMethods {[Description("Alphabetically")] Alphabetical, [Description("By Creation Time")] Creation };
+
         /// <summary>
         /// This bool is used to stop an infinite loop when selecting an analoggroup from a combobox.
         /// </summary>
@@ -143,7 +145,7 @@ namespace WordGenerator.Controls
 
             if (analogGroup == null)
             {
-                analogGroup = new AnalogGroup("Placehold analog group. Do not use.");
+                analogGroup = new AnalogGroup(-1, "Placehold analog group. Do not use.");
                 replacementGroupSelector.Enabled = false;
             }
             else
@@ -161,6 +163,7 @@ namespace WordGenerator.Controls
             updateGroupChannelSelectors();
             layoutGraphCollection();
             waveformEditor1.setWaveform(null);
+            analogGroup.UserAnalogGroup = true;
 
             timeResolutionEditor.setParameterData(analogGroup.TimeResolution);
 
@@ -237,6 +240,19 @@ namespace WordGenerator.Controls
 
         }
 
+        public void ActivateGraph(string channelName)
+        {
+            //Run through each graph in the collection, and once the one with the correct
+            //channel name is found, 'click' on it
+            foreach (WaveformGraph graph in waveformGraphCollection1.WaveformGraphs)
+            {
+                if (graph.Controls[0].Text == channelName)
+                {
+                    waveformGraphCollection1.WaveformGraphCollection_gotClicked(graph, new EventArgs());
+                }
+            }
+        }
+
         public void setChannelCollection(ChannelCollection analogChannelCollection)
         {
             this.analogChannelCollection = analogChannelCollection;
@@ -248,14 +264,15 @@ namespace WordGenerator.Controls
             InitializeComponent();
             groupChannelSelectors = new List<GroupChannelSelection>();
             this.setChannelCollection(new ChannelCollection());
-            this.setAnalogGroup(new AnalogGroup("Placehold analog group. Do not use."));
+            this.setAnalogGroup(new AnalogGroup(-1, "Placehold analog group. Do not use."));
             this.toolTip1.SetToolTip(this.timeResolutionEditor, "This field is only meaningful if buffers are being generated in \"Variable Timebase\" mode.");
             this.toolTip1.SetToolTip(this.timeResolutionLabel, "This field is only meaningful if buffers are being generated in \"Variable Timebase\" mode.");
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void newGroupButton_Click(object sender, EventArgs e)
         {
-            AnalogGroup ag = new AnalogGroup("Analog Group " + (Storage.sequenceData.AnalogGroups.Count+1));
+            int id = Storage.sequenceData.GenerateNewAnalogGroupID();
+            AnalogGroup ag = new AnalogGroup(id, "Group" + id);
             Storage.sequenceData.AnalogGroups.Add(ag);
             setAnalogGroup(ag);
         }
@@ -271,7 +288,12 @@ namespace WordGenerator.Controls
             if (Storage.sequenceData != null)
             {
                 foreach (AnalogGroup ag in Storage.sequenceData.AnalogGroups)
-                    analogGroupSelector.Items.Add(ag);
+                {
+                    if (ag.UserAnalogGroup)
+                    {
+                        analogGroupSelector.Items.Add(ag);
+                    }
+                }
             }
 
         }
@@ -302,7 +324,9 @@ namespace WordGenerator.Controls
             }
         }
 
-        // delete selected group
+        /// <summary>
+        /// Delete currently selected analog group.
+        /// </summary>
         private void button1_Click_1(object sender, EventArgs e)
         {
             if (Storage.sequenceData != null)
@@ -317,7 +341,7 @@ namespace WordGenerator.Controls
                             return;
                         }
                     }
-
+                    Storage.sequenceData.RemoveAnalogGroupID(analogGroup.ID);
                     Storage.sequenceData.AnalogGroups.Remove(this.analogGroup);
                     this.analogGroupSelector.SelectedItem = null;
                 }
@@ -334,7 +358,6 @@ namespace WordGenerator.Controls
         {
             if (analogGroupSelector.SelectedItem == null)
                 analogGroupSelector.SelectedItem = this.analogGroup;
-
         }
 
 
@@ -346,13 +369,13 @@ namespace WordGenerator.Controls
             }
         }
 
-        private void plus_Click(object sender, EventArgs e)
+        private void uparrow_Click(object sender, EventArgs e)
         {
             if (analogGroupSelector.SelectedIndex < analogGroupSelector.Items.Count - 1)
                 analogGroupSelector.SelectedIndex++;
         }
 
-        private void minus_Click(object sender, EventArgs e)
+        private void downarrow_Click(object sender, EventArgs e)
         {
             if (analogGroupSelector.SelectedIndex > 0)
                 analogGroupSelector.SelectedIndex--;
@@ -427,15 +450,19 @@ namespace WordGenerator.Controls
 
         private void button2_Click(object sender, EventArgs e)
         {
-            DialogResult res = MessageBox.Show("This action will delete all unused analog groups (ie groups that are not activated anywhere in the sequence. Are you sure you want to continue?", "Delete unused groups?", MessageBoxButtons.YesNo);
+            DialogResult res = MessageBox.Show("This action will delete all unused analog groups (ie groups that are not activated anywhere in the sequence). Are you sure you want to continue?", "Delete unused groups?", MessageBoxButtons.YesNo);
             if (res == DialogResult.Yes)
             {
                 List<AnalogGroup> usedGroups = new List<AnalogGroup>();
+                Storage.sequenceData.UsedAnalogGroupIDs = new HashSet<int>();
                 foreach (TimeStep step in Storage.sequenceData.TimeSteps)
                 {
                     if (step.AnalogGroup != null)
                         if (!usedGroups.Contains(step.AnalogGroup))
+                        {
+                            //step.AnalogGroup.ID = Storage.sequenceData.GenerateNewAnalogGroupID();
                             usedGroups.Add(step.AnalogGroup);
+                        }
                 }
 
                 Storage.sequenceData.AnalogGroups = usedGroups;
@@ -443,6 +470,42 @@ namespace WordGenerator.Controls
             }
         }
 
+        private void waveformEditor1_Load(object sender, EventArgs e)
+        {
 
+        }
+
+        private void populateorderGroupsComboBox()
+        {
+            if (Storage.sequenceData != null)
+            {
+                orderGroups.Items.Clear();
+                Array methods = Enum.GetValues(typeof(GroupOrderingMethods));
+                foreach (GroupOrderingMethods method in methods)
+                    orderGroups.Items.Add(method.GetDescription());
+            }
+        }
+
+        private void orderGroupsComboBox_DropDown(object sender, EventArgs e)
+        {
+            populateorderGroupsComboBox();
+        }
+
+        private void orderGroupsComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            OrderGroupList(orderGroups.SelectedItem as String);
+        }
+
+        /// <summary>
+        /// Sorts the list Storage.sequenceData.AnalogGroups according to the input method.
+        /// </summary>
+        /// <param name="method">GroupOrderingMethods element to use as the sort method.</param>
+        private void OrderGroupList(String method)
+        {
+            if (method == GroupOrderingMethods.Alphabetical.GetDescription())
+                Storage.sequenceData.AnalogGroups.Sort(AnalogGroup.CompareByAlphabeticalPosition);
+            else if (method == GroupOrderingMethods.Creation.GetDescription())
+                Storage.sequenceData.AnalogGroups.Sort(AnalogGroup.CompareByGroupID);
+        }
     }
 }

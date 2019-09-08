@@ -34,12 +34,14 @@ namespace WordGenerator.Controls
             this.listSelector = new System.Windows.Forms.ComboBox();
             this.deleteButton = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.selectGroup = new System.Windows.Forms.ComboBox();
             this.derivedCheckBox = new System.Windows.Forms.CheckBox();
             this.derivedValueLabel = new System.Windows.Forms.Label();
             this.formulaTextBox = new System.Windows.Forms.TextBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.helpOnSupportedOperationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.permanentValueLabel = new System.Windows.Forms.Label();
+            this.removeGroup = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.valueSelector)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -94,6 +96,18 @@ namespace WordGenerator.Controls
             this.deleteButton.UseVisualStyleBackColor = true;
             this.deleteButton.Click += new System.EventHandler(this.deleteVariableButtonClick);
             // 
+            // selectGroup
+            // 
+            this.selectGroup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.selectGroup.FormattingEnabled = true;
+            this.selectGroup.Location = new System.Drawing.Point(3, 26);
+            this.selectGroup.Name = "selectGroup";
+            this.selectGroup.Size = new System.Drawing.Size(111, 21);
+            this.selectGroup.TabIndex = 5;
+            this.toolTip1.SetToolTip(this.selectGroup, "Select an ordering group for this variable.");
+            this.selectGroup.DropDown += new System.EventHandler(this.selectGroup_DropDown);
+            this.selectGroup.SelectedIndexChanged += new System.EventHandler(this.selectGroup_SelectedIndexChanged);
+            // 
             // derivedCheckBox
             // 
             this.derivedCheckBox.AutoSize = true;
@@ -107,7 +121,7 @@ namespace WordGenerator.Controls
             // derivedValueLabel
             // 
             this.derivedValueLabel.AutoEllipsis = true;
-            this.derivedValueLabel.Location = new System.Drawing.Point(3, 51);
+            this.derivedValueLabel.Location = new System.Drawing.Point(-2, 76);
             this.derivedValueLabel.Name = "derivedValueLabel";
             this.derivedValueLabel.Size = new System.Drawing.Size(214, 46);
             this.derivedValueLabel.TabIndex = 7;
@@ -117,7 +131,7 @@ namespace WordGenerator.Controls
             // formulaTextBox
             // 
             this.formulaTextBox.ContextMenuStrip = this.contextMenuStrip1;
-            this.formulaTextBox.Location = new System.Drawing.Point(3, 28);
+            this.formulaTextBox.Location = new System.Drawing.Point(0, 53);
             this.formulaTextBox.Name = "formulaTextBox";
             this.formulaTextBox.Size = new System.Drawing.Size(206, 20);
             this.formulaTextBox.TabIndex = 8;
@@ -129,12 +143,12 @@ namespace WordGenerator.Controls
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.helpOnSupportedOperationsToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(228, 26);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(233, 26);
             // 
             // helpOnSupportedOperationsToolStripMenuItem
             // 
             this.helpOnSupportedOperationsToolStripMenuItem.Name = "helpOnSupportedOperationsToolStripMenuItem";
-            this.helpOnSupportedOperationsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.helpOnSupportedOperationsToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
             this.helpOnSupportedOperationsToolStripMenuItem.Text = "Help on supported operations";
             this.helpOnSupportedOperationsToolStripMenuItem.Click += new System.EventHandler(this.helpOnSupportedOperationsToolStripMenuItem_Click);
             // 
@@ -149,6 +163,17 @@ namespace WordGenerator.Controls
             this.permanentValueLabel.Text = "permanentValueLabel";
             this.permanentValueLabel.Visible = false;
             // 
+            // removeGroup
+            // 
+            this.removeGroup.Location = new System.Drawing.Point(120, 26);
+            this.removeGroup.Name = "removeGroup";
+            this.removeGroup.Size = new System.Drawing.Size(87, 21);
+            this.removeGroup.TabIndex = 3;
+            this.removeGroup.TabStop = false;
+            this.removeGroup.Text = "Remove group";
+            this.removeGroup.UseVisualStyleBackColor = true;
+            this.removeGroup.Click += new System.EventHandler(this.removeGroup_Click);
+            // 
             // VariableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -161,6 +186,8 @@ namespace WordGenerator.Controls
             this.Controls.Add(this.listSelector);
             this.Controls.Add(this.valueSelector);
             this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.selectGroup);
+            this.Controls.Add(this.removeGroup);
             this.Name = "VariableEditor";
             this.Size = new System.Drawing.Size(220, 104);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.VariableEditor_Paint);
@@ -184,5 +211,7 @@ namespace WordGenerator.Controls
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem helpOnSupportedOperationsToolStripMenuItem;
         private System.Windows.Forms.Label permanentValueLabel;
+        private System.Windows.Forms.ComboBox selectGroup;
+        private System.Windows.Forms.Button removeGroup;
     }
 }

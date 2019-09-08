@@ -42,6 +42,8 @@ namespace WordGenerator.Controls
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.bgRunButton = new System.Windows.Forms.Button();
+            this.runModeListButton = new System.Windows.Forms.Button();
+            this.modeListsComboBox = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.iterationSelector)).BeginInit();
             this.flowLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -59,7 +61,7 @@ namespace WordGenerator.Controls
             // 
             // runCurrentButton
             // 
-            this.runCurrentButton.Location = new System.Drawing.Point(3, 311);
+            this.runCurrentButton.Location = new System.Drawing.Point(3, 296);
             this.runCurrentButton.Name = "runCurrentButton";
             this.runCurrentButton.Size = new System.Drawing.Size(110, 39);
             this.runCurrentButton.TabIndex = 4;
@@ -90,7 +92,7 @@ namespace WordGenerator.Controls
             // 
             // iterationSelector
             // 
-            this.iterationSelector.Location = new System.Drawing.Point(58, 18);
+            this.iterationSelector.Location = new System.Drawing.Point(58, 12);
             this.iterationSelector.Maximum = new decimal(new int[] {
             10000000,
             0,
@@ -116,7 +118,7 @@ namespace WordGenerator.Controls
             // 
             this.setIterButt.Location = new System.Drawing.Point(0, 3);
             this.setIterButt.Name = "setIterButt";
-            this.setIterButt.Size = new System.Drawing.Size(54, 51);
+            this.setIterButt.Size = new System.Drawing.Size(54, 35);
             this.setIterButt.TabIndex = 2;
             this.setIterButt.Text = "Set Iteration";
             this.setIterButt.UseVisualStyleBackColor = true;
@@ -153,11 +155,13 @@ namespace WordGenerator.Controls
             this.flowLayoutPanel1.Controls.Add(this.panel1);
             this.flowLayoutPanel1.Controls.Add(this.runCurrentButton);
             this.flowLayoutPanel1.Controls.Add(this.bgRunButton);
+            this.flowLayoutPanel1.Controls.Add(this.runModeListButton);
+            this.flowLayoutPanel1.Controls.Add(this.modeListsComboBox);
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(119, 400);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(119, 468);
             this.flowLayoutPanel1.TabIndex = 10;
             // 
             // panel1
@@ -166,12 +170,12 @@ namespace WordGenerator.Controls
             this.panel1.Controls.Add(this.iterationSelector);
             this.panel1.Location = new System.Drawing.Point(3, 249);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(115, 56);
+            this.panel1.Size = new System.Drawing.Size(115, 41);
             this.panel1.TabIndex = 11;
             // 
             // bgRunButton
             // 
-            this.bgRunButton.Location = new System.Drawing.Point(3, 356);
+            this.bgRunButton.Location = new System.Drawing.Point(3, 341);
             this.bgRunButton.Name = "bgRunButton";
             this.bgRunButton.Size = new System.Drawing.Size(110, 39);
             this.bgRunButton.TabIndex = 12;
@@ -179,13 +183,33 @@ namespace WordGenerator.Controls
             this.bgRunButton.UseVisualStyleBackColor = true;
             this.bgRunButton.Click += new System.EventHandler(this.bgRunButton_Click);
             // 
+            // runModeListButton
+            // 
+            this.runModeListButton.Location = new System.Drawing.Point(3, 386);
+            this.runModeListButton.Name = "runModeListButton";
+            this.runModeListButton.Size = new System.Drawing.Size(110, 25);
+            this.runModeListButton.TabIndex = 13;
+            this.runModeListButton.Text = "Run mode list";
+            this.runModeListButton.UseVisualStyleBackColor = true;
+            this.runModeListButton.Click += new System.EventHandler(this.runModeListButton_Click);
+            // 
+            // modeListsComboBox
+            // 
+            this.modeListsComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.modeListsComboBox.FormattingEnabled = true;
+            this.modeListsComboBox.Location = new System.Drawing.Point(3, 417);
+            this.modeListsComboBox.Name = "modeListsComboBox";
+            this.modeListsComboBox.Size = new System.Drawing.Size(108, 21);
+            this.modeListsComboBox.TabIndex = 14;
+            this.modeListsComboBox.DropDown += new System.EventHandler(this.modeListsComboBox_DropDown);
+            // 
             // RunControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.flowLayoutPanel1);
             this.Name = "RunControl";
-            this.Size = new System.Drawing.Size(119, 402);
+            this.Size = new System.Drawing.Size(119, 463);
             ((System.ComponentModel.ISupportInitialize)(this.iterationSelector)).EndInit();
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
@@ -209,5 +233,7 @@ namespace WordGenerator.Controls
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Panel panel1;
         public System.Windows.Forms.Button bgRunButton;
+        private System.Windows.Forms.Button runModeListButton;
+        private System.Windows.Forms.ComboBox modeListsComboBox;
     }
 }

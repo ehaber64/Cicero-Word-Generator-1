@@ -38,6 +38,7 @@ namespace WordGenerator
             this.newSequence = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.recentFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.onlySaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.compareSequenceMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -46,7 +47,8 @@ namespace WordGenerator
             this.insertSequenceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.loadSettings = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveSettings = new System.Windows.Forms.ToolStripMenuItem();
+            this.onlySaveSettings = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveSettingsAs = new System.Windows.Forms.ToolStripMenuItem();
             this.loadDefaultSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.saveDefaultSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -104,12 +106,17 @@ namespace WordGenerator
             this.analogTab = new System.Windows.Forms.TabPage();
             this.analogGroupEditor = new WordGenerator.Controls.AnalogGroupEditor();
             this.sequenceTab = new System.Windows.Forms.TabPage();
+            this.openAtticusUponStartup = new System.Windows.Forms.CheckBox();
+            this.useNetworkClockCheckBox = new System.Windows.Forms.CheckBox();
             this.waitForReady = new System.Windows.Forms.CheckBox();
             this.lockDigitalCheckBox = new System.Windows.Forms.CheckBox();
             this.rs232GroupsLabel = new System.Windows.Forms.Label();
             this.gpibGroupsLabel = new System.Windows.Forms.Label();
             this.analogGroupsLabel = new System.Windows.Forms.Label();
             this.serverManagerButton = new System.Windows.Forms.Button();
+            this.saveSettingsButton = new System.Windows.Forms.Button();
+            this.savePathButton = new System.Windows.Forms.Button();
+            this.savePathBox = new System.Windows.Forms.TextBox();
             this.button2 = new System.Windows.Forms.Button();
             this.sequencePage = new WordGenerator.Controls.SequencePage();
             this.mainTab = new System.Windows.Forms.TabControl();
@@ -117,12 +124,14 @@ namespace WordGenerator
             this.overridePage = new WordGenerator.OverridePage();
             this.rs232Tab = new System.Windows.Forms.TabPage();
             this.rS232GroupEditor = new WordGenerator.Controls.Temporary.RS232GroupEditor();
-            this.pulsesTab = new System.Windows.Forms.TabPage();
             this.pulsesPage = new WordGenerator.Controls.PulsesPage();
+            this.pulsesTab = new System.Windows.Forms.TabPage();
             this.eventLogTab = new System.Windows.Forms.TabPage();
             this.messageLogTextBox = new System.Windows.Forms.TextBox();
+            this.runModesTab = new System.Windows.Forms.TabPage();
+            
+            this.runModesLists = new WordGenerator.Controls.RunModesTab.RunModesLists();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.useNetworkClockCheckBox = new System.Windows.Forms.CheckBox();
             this.statusStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.variablesTab.SuspendLayout();
@@ -135,6 +144,7 @@ namespace WordGenerator
             this.rs232Tab.SuspendLayout();
             this.pulsesTab.SuspendLayout();
             this.eventLogTab.SuspendLayout();
+            this.runModesTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // statusStrip
@@ -142,7 +152,7 @@ namespace WordGenerator
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.settingsFileLabel,
             this.toolStripStatusLabel});
-            this.statusStrip.Location = new System.Drawing.Point(0, 860);
+            this.statusStrip.Location = new System.Drawing.Point(0, 727);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(1272, 22);
             this.statusStrip.TabIndex = 1;
@@ -180,6 +190,7 @@ namespace WordGenerator
             this.newSequence,
             this.openToolStripMenuItem,
             this.recentFilesToolStripMenuItem,
+            this.onlySaveToolStripMenuItem,
             this.saveAsToolStripMenuItem,
             this.toolStripSeparator3,
             this.compareSequenceMenuItem,
@@ -188,7 +199,8 @@ namespace WordGenerator
             this.insertSequenceToolStripMenuItem,
             this.toolStripMenuItem1,
             this.loadSettings,
-            this.saveSettings,
+            this.onlySaveSettings,
+            this.saveSettingsAs,
             this.loadDefaultSettings,
             this.saveDefaultSettings,
             this.toolStripSeparator1,
@@ -218,6 +230,13 @@ namespace WordGenerator
             this.recentFilesToolStripMenuItem.Name = "recentFilesToolStripMenuItem";
             this.recentFilesToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
             this.recentFilesToolStripMenuItem.Text = "Recent Sequence Files";
+            // 
+            // onlySaveToolStripMenuItem
+            // 
+            this.onlySaveToolStripMenuItem.Name = "onlySaveToolStripMenuItem";
+            this.onlySaveToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.onlySaveToolStripMenuItem.Text = "&Save Sequence";
+            this.onlySaveToolStripMenuItem.Click += new System.EventHandler(this.onlySaveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
@@ -269,12 +288,19 @@ namespace WordGenerator
             this.loadSettings.Text = "Load S&ettings...";
             this.loadSettings.Click += new System.EventHandler(this.loadSettings_Click);
             // 
-            // saveSettings
+            // onlySaveSettings
             // 
-            this.saveSettings.Name = "saveSettings";
-            this.saveSettings.Size = new System.Drawing.Size(204, 22);
-            this.saveSettings.Text = "Save Settings As...";
-            this.saveSettings.Click += new System.EventHandler(this.saveSettings_Click);
+            this.onlySaveSettings.Name = "onlySaveSettings";
+            this.onlySaveSettings.Size = new System.Drawing.Size(204, 22);
+            this.onlySaveSettings.Text = "Save Settings";
+            this.onlySaveSettings.Click += new System.EventHandler(this.onlySaveSettings_Click);
+            // 
+            // saveSettingsAs
+            // 
+            this.saveSettingsAs.Name = "saveSettingsAs";
+            this.saveSettingsAs.Size = new System.Drawing.Size(204, 22);
+            this.saveSettingsAs.Text = "Save Settings As...";
+            this.saveSettingsAs.Click += new System.EventHandler(this.saveSettings_Click);
             // 
             // loadDefaultSettings
             // 
@@ -444,7 +470,7 @@ namespace WordGenerator
             this.populateSequenceWithNewChannelsToolStripMenuItem,
             this.enableDebugMenuToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.toolsToolStripMenuItem.Text = "&Tools";
             // 
             // editLogicalDevicesToolStripMenuItem
@@ -467,8 +493,8 @@ namespace WordGenerator
             this.populateSequenceWithNewChannelsToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             this.populateSequenceWithNewChannelsToolStripMenuItem.Text = "&Populate Sequence";
             this.populateSequenceWithNewChannelsToolStripMenuItem.ToolTipText = "Click here to update SequenceData object to contain all of the channels in the pr" +
-                "esent SettingsData. NOTE: Once this is done, Sequence files will no longer be co" +
-                "mpatible with old settings files.\r\n";
+    "esent SettingsData. NOTE: Once this is done, Sequence files will no longer be co" +
+    "mpatible with old settings files.\r\n";
             this.populateSequenceWithNewChannelsToolStripMenuItem.Click += new System.EventHandler(this.populateSequenceWithNewChannelsToolStripMenuItem_Click);
             // 
             // enableDebugMenuToolStripMenuItem
@@ -658,7 +684,7 @@ namespace WordGenerator
             this.variablesTab.Location = new System.Drawing.Point(4, 22);
             this.variablesTab.Name = "variablesTab";
             this.variablesTab.Padding = new System.Windows.Forms.Padding(3);
-            this.variablesTab.Size = new System.Drawing.Size(1264, 810);
+            this.variablesTab.Size = new System.Drawing.Size(1264, 677);
             this.variablesTab.TabIndex = 4;
             this.variablesTab.Text = "Variables (F7)";
             this.variablesTab.UseVisualStyleBackColor = true;
@@ -676,7 +702,7 @@ namespace WordGenerator
             this.commonWaveformTab.Location = new System.Drawing.Point(4, 22);
             this.commonWaveformTab.Name = "commonWaveformTab";
             this.commonWaveformTab.Padding = new System.Windows.Forms.Padding(3);
-            this.commonWaveformTab.Size = new System.Drawing.Size(1264, 810);
+            this.commonWaveformTab.Size = new System.Drawing.Size(1264, 677);
             this.commonWaveformTab.TabIndex = 3;
             this.commonWaveformTab.Text = "Common Waveform (F6)";
             this.commonWaveformTab.UseVisualStyleBackColor = true;
@@ -694,7 +720,7 @@ namespace WordGenerator
             this.gpibTab.Location = new System.Drawing.Point(4, 22);
             this.gpibTab.Name = "gpibTab";
             this.gpibTab.Padding = new System.Windows.Forms.Padding(3);
-            this.gpibTab.Size = new System.Drawing.Size(1264, 810);
+            this.gpibTab.Size = new System.Drawing.Size(1264, 677);
             this.gpibTab.TabIndex = 2;
             this.gpibTab.Text = "GPIB (F4)";
             this.gpibTab.UseVisualStyleBackColor = true;
@@ -704,7 +730,7 @@ namespace WordGenerator
             this.gpibGroupEditor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gpibGroupEditor.Location = new System.Drawing.Point(3, 3);
             this.gpibGroupEditor.Name = "gpibGroupEditor";
-            this.gpibGroupEditor.Size = new System.Drawing.Size(1258, 890);
+            this.gpibGroupEditor.Size = new System.Drawing.Size(1258, 671);
             this.gpibGroupEditor.TabIndex = 0;
             // 
             // analogTab
@@ -713,7 +739,7 @@ namespace WordGenerator
             this.analogTab.Location = new System.Drawing.Point(4, 22);
             this.analogTab.Name = "analogTab";
             this.analogTab.Padding = new System.Windows.Forms.Padding(3);
-            this.analogTab.Size = new System.Drawing.Size(1264, 810);
+            this.analogTab.Size = new System.Drawing.Size(1264, 677);
             this.analogTab.TabIndex = 1;
             this.analogTab.Text = "Analog (F3)";
             this.analogTab.UseVisualStyleBackColor = true;
@@ -723,11 +749,13 @@ namespace WordGenerator
             this.analogGroupEditor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.analogGroupEditor.Location = new System.Drawing.Point(3, 3);
             this.analogGroupEditor.Name = "analogGroupEditor";
-            this.analogGroupEditor.Size = new System.Drawing.Size(1258, 890);
+            this.analogGroupEditor.Size = new System.Drawing.Size(1258, 671);
             this.analogGroupEditor.TabIndex = 0;
             // 
             // sequenceTab
             // 
+            this.sequenceTab.AutoScroll = true;
+            this.sequenceTab.Controls.Add(this.openAtticusUponStartup);
             this.sequenceTab.Controls.Add(this.useNetworkClockCheckBox);
             this.sequenceTab.Controls.Add(this.waitForReady);
             this.sequenceTab.Controls.Add(this.lockDigitalCheckBox);
@@ -735,21 +763,46 @@ namespace WordGenerator
             this.sequenceTab.Controls.Add(this.gpibGroupsLabel);
             this.sequenceTab.Controls.Add(this.analogGroupsLabel);
             this.sequenceTab.Controls.Add(this.serverManagerButton);
+            this.sequenceTab.Controls.Add(this.saveSettingsButton);
+            this.sequenceTab.Controls.Add(this.savePathButton);
+            this.sequenceTab.Controls.Add(this.savePathBox);
             this.sequenceTab.Controls.Add(this.button2);
             this.sequenceTab.Controls.Add(this.sequencePage);
             this.sequenceTab.Location = new System.Drawing.Point(4, 22);
             this.sequenceTab.Name = "sequenceTab";
             this.sequenceTab.Padding = new System.Windows.Forms.Padding(3);
-            this.sequenceTab.Size = new System.Drawing.Size(1264, 810);
+            this.sequenceTab.Size = new System.Drawing.Size(1264, 677);
             this.sequenceTab.TabIndex = 0;
             this.sequenceTab.Text = "Sequence (F1)";
             this.sequenceTab.ToolTipText = "Testing";
             this.sequenceTab.UseVisualStyleBackColor = true;
             // 
+            // openAtticusUponStartup
+            // 
+            this.openAtticusUponStartup.AutoSize = true;
+            this.openAtticusUponStartup.Location = new System.Drawing.Point(7, 901);
+            this.openAtticusUponStartup.Name = "openAtticusUponStartup";
+            this.openAtticusUponStartup.Size = new System.Drawing.Size(119, 30);
+            this.openAtticusUponStartup.TabIndex = 10;
+            this.openAtticusUponStartup.Text = "Open Atticus server\r\nat startup?";
+            this.openAtticusUponStartup.UseVisualStyleBackColor = true;
+            this.openAtticusUponStartup.CheckedChanged += new System.EventHandler(this.openAtticusUponStartup_CheckedChanged);
+            // 
+            // useNetworkClockCheckBox
+            // 
+            this.useNetworkClockCheckBox.AutoSize = true;
+            this.useNetworkClockCheckBox.Location = new System.Drawing.Point(7, 887);
+            this.useNetworkClockCheckBox.Name = "useNetworkClockCheckBox";
+            this.useNetworkClockCheckBox.Size = new System.Drawing.Size(118, 17);
+            this.useNetworkClockCheckBox.TabIndex = 10;
+            this.useNetworkClockCheckBox.Text = "Use Network Clock";
+            this.useNetworkClockCheckBox.UseVisualStyleBackColor = true;
+            this.useNetworkClockCheckBox.CheckedChanged += new System.EventHandler(this.useNetworkClockCheckbox_CheckedChanged);
+            // 
             // waitForReady
             // 
             this.waitForReady.AutoSize = true;
-            this.waitForReady.Location = new System.Drawing.Point(7, 747);
+            this.waitForReady.Location = new System.Drawing.Point(7, 870);
             this.waitForReady.Name = "waitForReady";
             this.waitForReady.Size = new System.Drawing.Size(97, 17);
             this.waitForReady.TabIndex = 9;
@@ -760,7 +813,7 @@ namespace WordGenerator
             // lockDigitalCheckBox
             // 
             this.lockDigitalCheckBox.AutoSize = true;
-            this.lockDigitalCheckBox.Location = new System.Drawing.Point(7, 726);
+            this.lockDigitalCheckBox.Location = new System.Drawing.Point(7, 852);
             this.lockDigitalCheckBox.Name = "lockDigitalCheckBox";
             this.lockDigitalCheckBox.Size = new System.Drawing.Size(112, 17);
             this.lockDigitalCheckBox.TabIndex = 8;
@@ -796,7 +849,7 @@ namespace WordGenerator
             // 
             // serverManagerButton
             // 
-            this.serverManagerButton.Location = new System.Drawing.Point(3, 685);
+            this.serverManagerButton.Location = new System.Drawing.Point(3, 634);
             this.serverManagerButton.Name = "serverManagerButton";
             this.serverManagerButton.Size = new System.Drawing.Size(116, 35);
             this.serverManagerButton.TabIndex = 3;
@@ -804,9 +857,39 @@ namespace WordGenerator
             this.serverManagerButton.UseVisualStyleBackColor = true;
             this.serverManagerButton.Click += new System.EventHandler(this.editServerManagerToolStripMenuItem_Click);
             // 
+            // saveSettingsButton
+            // 
+            this.saveSettingsButton.Location = new System.Drawing.Point(3, 695);
+            this.saveSettingsButton.Name = "saveSettingsButton";
+            this.saveSettingsButton.Size = new System.Drawing.Size(116, 33);
+            this.saveSettingsButton.TabIndex = 12;
+            this.saveSettingsButton.Text = "Save settings";
+            this.saveSettingsButton.UseVisualStyleBackColor = true;
+            this.saveSettingsButton.Click += new System.EventHandler(this.saveSettingsButton_Click);
+            // 
+            // savePathButton
+            // 
+            this.savePathButton.Location = new System.Drawing.Point(3, 730);
+            this.savePathButton.Name = "savePathButton";
+            this.savePathButton.Size = new System.Drawing.Size(116, 35);
+            this.savePathButton.TabIndex = 12;
+            this.savePathButton.Text = "Browse for savefile path:";
+            this.savePathButton.UseVisualStyleBackColor = true;
+            this.savePathButton.Click += new System.EventHandler(this.savePathButton_Click);
+            // 
+            // savePathBox
+            // 
+            this.savePathBox.Location = new System.Drawing.Point(5, 769);
+            this.savePathBox.Multiline = true;
+            this.savePathBox.Name = "savePathBox";
+            this.savePathBox.ReadOnly = true;
+            this.savePathBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.savePathBox.Size = new System.Drawing.Size(114, 70);
+            this.savePathBox.TabIndex = 0;
+            // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(3, 646);
+            this.button2.Location = new System.Drawing.Point(3, 600);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(116, 33);
             this.button2.TabIndex = 2;
@@ -819,9 +902,28 @@ namespace WordGenerator
             this.sequencePage.Dock = System.Windows.Forms.DockStyle.Fill;
             this.sequencePage.Location = new System.Drawing.Point(3, 3);
             this.sequencePage.Name = "sequencePage";
-            this.sequencePage.Size = new System.Drawing.Size(1258, 804);
+            this.sequencePage.Size = new System.Drawing.Size(1241, 928);
             this.sequencePage.TabIndex = 0;
-            this.sequencePage.messageLog += new System.EventHandler<DataStructures.MessageEvent> (this.handleMessageEvent);
+            this.sequencePage.messageLog += new System.EventHandler<DataStructures.MessageEvent>(this.handleMessageEvent);
+            // 
+            // runModesTab
+            // 
+            this.runModesTab.Controls.Add(this.runModesLists);
+            this.runModesTab.Location = new System.Drawing.Point(4, 22);
+            this.runModesTab.Name = "runModesTab";
+            this.runModesTab.Padding = new System.Windows.Forms.Padding(3);
+            this.runModesTab.Size = new System.Drawing.Size(1264, 677);
+            this.runModesTab.TabIndex = 9;
+            this.runModesTab.Text = "Run Modes";
+            this.runModesTab.UseVisualStyleBackColor = true;
+            // 
+            // runModesLists
+            // 
+            this.runModesLists.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.runModesLists.Location = new System.Drawing.Point(3, 3);
+            this.runModesLists.Name = "runModesLists";
+            this.runModesLists.Size = new System.Drawing.Size(1258, 671);
+            this.runModesLists.TabIndex = 0;
             // 
             // mainTab
             // 
@@ -834,19 +936,21 @@ namespace WordGenerator
             this.mainTab.Controls.Add(this.variablesTab);
             this.mainTab.Controls.Add(this.pulsesTab);
             this.mainTab.Controls.Add(this.eventLogTab);
+            this.mainTab.Controls.Add(this.runModesTab);
             this.mainTab.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainTab.Location = new System.Drawing.Point(0, 24);
             this.mainTab.Name = "mainTab";
             this.mainTab.SelectedIndex = 0;
-            this.mainTab.Size = new System.Drawing.Size(1272, 836);
+            this.mainTab.Size = new System.Drawing.Size(1272, 703);
             this.mainTab.TabIndex = 2;
+            this.mainTab.SelectedIndexChanged += new System.EventHandler(this.mainTab_SelectedIndexChanged);
             // 
             // overrideTab
             // 
             this.overrideTab.Controls.Add(this.overridePage);
             this.overrideTab.Location = new System.Drawing.Point(4, 22);
             this.overrideTab.Name = "overrideTab";
-            this.overrideTab.Size = new System.Drawing.Size(1264, 810);
+            this.overrideTab.Size = new System.Drawing.Size(1264, 677);
             this.overrideTab.TabIndex = 7;
             this.overrideTab.Text = "Override (F2)";
             this.overrideTab.UseVisualStyleBackColor = true;
@@ -856,7 +960,7 @@ namespace WordGenerator
             this.overridePage.Dock = System.Windows.Forms.DockStyle.Fill;
             this.overridePage.Location = new System.Drawing.Point(0, 0);
             this.overridePage.Name = "overridePage";
-            this.overridePage.Size = new System.Drawing.Size(1264, 896);
+            this.overridePage.Size = new System.Drawing.Size(1264, 677);
             this.overridePage.TabIndex = 0;
             // 
             // rs232Tab
@@ -864,7 +968,7 @@ namespace WordGenerator
             this.rs232Tab.Controls.Add(this.rS232GroupEditor);
             this.rs232Tab.Location = new System.Drawing.Point(4, 22);
             this.rs232Tab.Name = "rs232Tab";
-            this.rs232Tab.Size = new System.Drawing.Size(1264, 810);
+            this.rs232Tab.Size = new System.Drawing.Size(1264, 677);
             this.rs232Tab.TabIndex = 5;
             this.rs232Tab.Text = "RS232 (F5)";
             this.rs232Tab.UseVisualStyleBackColor = true;
@@ -881,7 +985,7 @@ namespace WordGenerator
             this.pulsesTab.Controls.Add(this.pulsesPage);
             this.pulsesTab.Location = new System.Drawing.Point(4, 22);
             this.pulsesTab.Name = "pulsesTab";
-            this.pulsesTab.Size = new System.Drawing.Size(1264, 810);
+            this.pulsesTab.Size = new System.Drawing.Size(1264, 677);
             this.pulsesTab.TabIndex = 8;
             this.pulsesTab.Text = "Pulses (F8)";
             this.pulsesTab.UseVisualStyleBackColor = true;
@@ -891,7 +995,7 @@ namespace WordGenerator
             this.pulsesPage.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pulsesPage.Location = new System.Drawing.Point(0, 0);
             this.pulsesPage.Name = "pulsesPage";
-            this.pulsesPage.Size = new System.Drawing.Size(1264, 896);
+            this.pulsesPage.Size = new System.Drawing.Size(1264, 677);
             this.pulsesPage.TabIndex = 0;
             // 
             // eventLogTab
@@ -899,7 +1003,7 @@ namespace WordGenerator
             this.eventLogTab.Controls.Add(this.messageLogTextBox);
             this.eventLogTab.Location = new System.Drawing.Point(4, 22);
             this.eventLogTab.Name = "eventLogTab";
-            this.eventLogTab.Size = new System.Drawing.Size(1264, 810);
+            this.eventLogTab.Size = new System.Drawing.Size(1264, 677);
             this.eventLogTab.TabIndex = 6;
             this.eventLogTab.Text = "Event Log";
             this.eventLogTab.UseVisualStyleBackColor = true;
@@ -920,22 +1024,13 @@ namespace WordGenerator
             this.toolTip1.UseAnimation = false;
             this.toolTip1.UseFading = false;
             // 
-            // useNetworkClockCheckBox
-            // 
-            this.useNetworkClockCheckBox.AutoSize = true;
-            this.useNetworkClockCheckBox.Location = new System.Drawing.Point(7, 768);
-            this.useNetworkClockCheckBox.Name = "useNetworkClockCheckBox";
-            this.useNetworkClockCheckBox.Size = new System.Drawing.Size(118, 17);
-            this.useNetworkClockCheckBox.TabIndex = 10;
-            this.useNetworkClockCheckBox.Text = "Use Network Clock";
-            this.useNetworkClockCheckBox.UseVisualStyleBackColor = true;
-            this.useNetworkClockCheckBox.CheckedChanged += new System.EventHandler(this.useNetworkClockCheckbox_CheckedChanged);
-            // 
             // MainClientForm
             // 
+            this.KeyPreview = true;
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(MainClientForm_KeyDown);
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1272, 882);
+            this.ClientSize = new System.Drawing.Size(1272, 749);
             this.Controls.Add(this.mainTab);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.menuStrip);
@@ -964,6 +1059,7 @@ namespace WordGenerator
             this.pulsesTab.ResumeLayout(false);
             this.eventLogTab.ResumeLayout(false);
             this.eventLogTab.PerformLayout();
+            this.runModesTab.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -976,6 +1072,7 @@ namespace WordGenerator
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem onlySaveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem recentFilesToolStripMenuItem;
@@ -993,14 +1090,15 @@ namespace WordGenerator
         private System.Windows.Forms.ToolStripMenuItem populateSequenceWithNewChannelsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editServerManagerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadSettings;
-        private System.Windows.Forms.ToolStripMenuItem saveSettings;
+        private System.Windows.Forms.ToolStripMenuItem onlySaveSettings;
+        private System.Windows.Forms.ToolStripMenuItem saveSettingsAs;
         private System.Windows.Forms.ToolStripMenuItem loadDefaultSettings;
         private System.Windows.Forms.ToolStripMenuItem saveDefaultSettings;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.TabPage variablesTab;
         private System.Windows.Forms.TabPage commonWaveformTab;
         private System.Windows.Forms.TabPage gpibTab;
-        private WordGenerator.Controls.GpibGroupEditor gpibGroupEditor;
+        public WordGenerator.Controls.GpibGroupEditor gpibGroupEditor;
         private System.Windows.Forms.TabPage analogTab;
         private System.Windows.Forms.TabPage sequenceTab;
         public WordGenerator.Controls.SequencePage sequencePage;
@@ -1012,6 +1110,9 @@ namespace WordGenerator
         private System.Windows.Forms.TextBox messageLogTextBox;
         private System.Windows.Forms.ToolStripMenuItem newSequence;
         private System.Windows.Forms.Button serverManagerButton;
+        private System.Windows.Forms.Button saveSettingsButton;
+        private System.Windows.Forms.Button savePathButton;
+        private System.Windows.Forms.TextBox savePathBox;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.TabPage overrideTab;
         private OverridePage overridePage;
@@ -1026,11 +1127,11 @@ namespace WordGenerator
         private System.Windows.Forms.ToolStripMenuItem runListInRandomOrderToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel settingsFileLabel;
         private System.Windows.Forms.TabPage pulsesTab;
+        public WordGenerator.Controls.PulsesPage pulsesPage;
         private System.Windows.Forms.Label rs232GroupsLabel;
         private System.Windows.Forms.Label gpibGroupsLabel;
         private System.Windows.Forms.Label analogGroupsLabel;
         public WordGenerator.Controls.AnalogGroupEditor analogGroupEditor;
-        public WordGenerator.Controls.PulsesPage pulsesPage;
         public WordGenerator.Controls.VariablesAndListPage variablesEditor;
         public WordGenerator.Controls.CommonWaveformEditor commonWaveformEditor;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
@@ -1064,7 +1165,9 @@ namespace WordGenerator
         private System.Windows.Forms.ToolStripMenuItem openGitRepositoryPageToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showOnlyWarningsOrErrorsInEventLogToolStripMenuItem;
         private System.Windows.Forms.CheckBox useNetworkClockCheckBox;
-
+        private System.Windows.Forms.CheckBox openAtticusUponStartup;
+        private System.Windows.Forms.TabPage runModesTab;
+        public WordGenerator.Controls.RunModesTab.RunModesLists runModesLists;
     }
 }
 

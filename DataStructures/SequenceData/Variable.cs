@@ -7,7 +7,7 @@ using DataStructures;
 namespace DataStructures
 {
     [Serializable, TypeConverter(typeof(ExpandableObjectConverter))]
-    public class Variable
+    public class Variable : IComparable<Variable>
     {
         public static readonly string EQUATION_ERROR_RECURSIVE = "Recursive variable reference detected.";
 
@@ -44,7 +44,6 @@ namespace DataStructures
             get { return relevant; }
             set { relevant = value; }
         }
-
 
         private string description;
 
@@ -86,6 +85,15 @@ namespace DataStructures
                 return variableFormula; 
             }
             set { variableFormula = value; }
+        }
+
+        /// <summary>
+        /// Make sure that the new variable has a unique ID number!
+        /// </summary>
+        /// <param name="newID">ID number that the new variable will have.</param>
+        public Variable(int newID)
+        {
+            ID = newID;
         }
 
         /// <summary>
@@ -259,41 +267,138 @@ namespace DataStructures
             return variableName;
         }
 
+        private int id = -1;
 
-
-
-#region Derived variables. IE variables that are arithmetically driven by other variables.
-
-    /*    public  const  string plus = "+";
-        public  const  string minus = "-";
-        public  const  string times = "*";
-        public  const  string over = "/";
-        public static readonly string[] combinerOperators = new string[] { plus, minus, times, over };
-
-        private List<string> combiners;
-
-        public List<string> Combiners
+        /// <summary>
+        /// A unique ID for each variable that can be used as a hash or to determine which of two variables was created first.
+        /// </summary>
+        public int ID
         {
-            get {
-                if (combiners == null)
-                {
-                    combiners = new List<string>();
-                }
-                return combiners; }
-            set { combiners = value; }
+            get { return id; }
+            set { id = value; }
         }
-        private List<DimensionedParameter> combinedValues;
 
-        public List<DimensionedParameter> CombinedValues
+        private String orderingGroup;
+
+        /// <summary>
+        /// User-defined group this variable belongs to. Can be used when listing variables to sort them into groups.
+        /// </summary>
+        public String OrderingGroup
         {
-            get {
-                if (combinedValues == null)
-                {
-                    combinedValues = new List<DimensionedParameter>();
-                }
-                return combinedValues; }
-            set { combinedValues = value; }
-        }*/
+            get { return orderingGroup; }
+            set { orderingGroup = value; }
+        }
+
+        /// <summary>
+        /// Compares the ID of the input variable to the variable this method was called on.
+        /// </summary>
+        public int CompareTo(Variable compareTo)
+        {
+            if (compareTo == null)
+            { return 1; }
+
+            return ID.CompareTo(compareTo.ID);
+        }
+
+        /// <summary>
+        /// If obj is a variable, compares its ID to the variable this was called on.
+        /// </summary>
+        public int CompareTo(object obj)
+        {
+            if (obj == null)
+            { return 1; }
+
+            return CompareTo(obj as Variable);
+        }
+
+        /// <summary>
+        /// Compares the variables by the alphabetical position of their names, if they have the same name then by CompareTo for variables. If useGroups is true and the variables belong to different groups, then the alphabetical position of the groups are compared.
+        /// </summary>
+        /// <returns>Returns 1 if variable1 > variable2, -1 if variable2 > variable1, and 0 if variable1 = variable2</returns>
+        public int CompareByAlphabeticalPosition(Variable variable, bool useGroups)
+        {
+            //Check if either variable is null, and treat null as less than an actual variable
+            if (this == null && variable == null)
+                return 0;
+            else if (this == null && variable != null)
+                return -1;
+            else if (this != null && variable == null)
+                return 1;
+
+            int comparison = 0;
+            //If we're sorting with groups, then compare the groups by alphabetical position.
+            //Only if the groups are the same will we then compare the variables
+            if (useGroups)
+                comparison = String.Compare(this.OrderingGroup, variable.OrderingGroup, StringComparison.CurrentCulture);
+
+            //If the ordering groups are the same (or aren't being used), 
+            //then the variable whose name has an earlier alphabetical position will come first
+            if (comparison == 0)
+                comparison = String.Compare(this.VariableName, variable.VariableName, StringComparison.CurrentCulture);
+            //If the names were also the same, then resort to the normal comparison
+            if (comparison == 0)
+                comparison = this.CompareTo(variable);
+
+            return comparison;
+        }
+
+        /// <summary>
+        /// Compare the variables by their ID numbers. If useGroups is true and the variables belong to different groups, then the alphabetical position of the groups are compared.
+        /// </summary>
+        /// <returns>Returns 1 if variable1 > variable2, -1 if variable2 > variable1, and 0 if variable1 = variable2</returns>
+        public int CompareByVariableID(Variable variable, bool useGroups)
+        {
+            //Check if either variable is null, and treat null as less than an actual variable
+            if (this == null && variable == null)
+                return 0;
+            else if (this == null && variable != null)
+                return -1;
+            else if (this != null && variable == null)
+                return 1;
+
+            int comparison = 0;
+            if (useGroups)
+                comparison = String.Compare(this.OrderingGroup, variable.OrderingGroup, StringComparison.CurrentCulture);
+
+            if (comparison == 0)
+                comparison = this.ID.CompareTo(variable.ID);
+
+            return comparison;
+        }
+
+
+        #region Derived variables. IE variables that are arithmetically driven by other variables.
+
+        /*    public  const  string plus = "+";
+            public  const  string minus = "-";
+            public  const  string times = "*";
+            public  const  string over = "/";
+            public static readonly string[] combinerOperators = new string[] { plus, minus, times, over };
+
+            private List<string> combiners;
+
+            public List<string> Combiners
+            {
+                get {
+                    if (combiners == null)
+                    {
+                        combiners = new List<string>();
+                    }
+                    return combiners; }
+                set { combiners = value; }
+            }
+            private List<DimensionedParameter> combinedValues;
+
+            public List<DimensionedParameter> CombinedValues
+            {
+                get {
+                    if (combinedValues == null)
+                    {
+                        combinedValues = new List<DimensionedParameter>();
+                    }
+                    return combinedValues; }
+                set { combinedValues = value; }
+            }*/
 
         private bool derivedVariable;
 

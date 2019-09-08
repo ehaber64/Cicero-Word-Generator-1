@@ -78,6 +78,18 @@
     <Compile Include="Controls\PulsesTab\AutoNameGlossaryDialog.Designer.cs">
       <DependentUpon>AutoNameGlossaryDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\RunModesTab\RunModesLists.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\RunModesTab\RunModesLists.Designer.cs">
+      <DependentUpon>RunModesLists.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\RunModesTab\ModeListEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\RunModesTab\ModeListEditor.Designer.cs">
+      <DependentUpon>ModeListEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Shared\AlternateFlowLayoutPanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -387,6 +399,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\PulsesTab\AutoNameGlossaryDialog.resx">
       <DependentUpon>AutoNameGlossaryDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\RunModesTab\ModeListEditor.resx">
+      <DependentUpon>ModeListEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\RunModesTab\RunModesLists.resx">
+      <DependentUpon>RunModesLists.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\VariablesTab\PermanentVariablesEditor.resx">
       <SubType>Designer</SubType>

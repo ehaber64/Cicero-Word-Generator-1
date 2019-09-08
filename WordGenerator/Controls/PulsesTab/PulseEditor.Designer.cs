@@ -28,6 +28,8 @@ namespace WordGenerator.Controls
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PulseEditor));
             this.pulseNameTextBox = new System.Windows.Forms.TextBox();
             this.pulseDescriptionTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -35,15 +37,23 @@ namespace WordGenerator.Controls
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.startDelayEnabled = new System.Windows.Forms.CheckBox();
             this.startDelayed = new System.Windows.Forms.CheckBox();
+            this.startDelayTime = new WordGenerator.Controls.HorizontalParameterEditor();
             this.label4 = new System.Windows.Forms.Label();
             this.startCondition = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.startConditionNew = new System.Windows.Forms.ComboBox();
+            this.startRelativeToStartOfPulse = new System.Windows.Forms.CheckBox();
+            this.startRelativeToEndOfPulse = new System.Windows.Forms.CheckBox();
+            this.endRelativeToStartOfPulse = new System.Windows.Forms.CheckBox();
+            this.endRelativeToEndOfPulse = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.endDelayEnabled = new System.Windows.Forms.CheckBox();
             this.endDelayed = new System.Windows.Forms.CheckBox();
+            this.endDelayTime = new WordGenerator.Controls.HorizontalParameterEditor();
             this.label5 = new System.Windows.Forms.Label();
             this.endCondition = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
+            this.endConditionNew = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
             this.pulseValue = new System.Windows.Forms.CheckBox();
             this.deleteButton = new System.Windows.Forms.Button();
@@ -55,8 +65,27 @@ namespace WordGenerator.Controls
             this.valueVariableComboBox = new System.Windows.Forms.ComboBox();
             this.autoNameCheckBox = new System.Windows.Forms.CheckBox();
             this.pulseDuration = new WordGenerator.Controls.HorizontalParameterEditor();
-            this.endDelayTime = new WordGenerator.Controls.HorizontalParameterEditor();
-            this.startDelayTime = new WordGenerator.Controls.HorizontalParameterEditor();
+            this.pulseType = new System.Windows.Forms.ComboBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.pulseGroup = new System.Windows.Forms.ComboBox();
+            this.pulseGroupLabel = new System.Windows.Forms.Label();
+            this.pulseMode = new System.Windows.Forms.ComboBox();
+            this.pulseModeLabel = new System.Windows.Forms.Label();
+            this.pulseChannelLabel = new System.Windows.Forms.Label();
+            this.pulseChannel = new System.Windows.Forms.ComboBox();
+            this.waveformGraphCollection1 = new WordGenerator.Controls.WaveformGraphCollection();
+            this.disablePulse = new System.Windows.Forms.CheckBox();
+            this.editWaveform = new System.Windows.Forms.Button();
+            this.modeReference = new System.Windows.Forms.ComboBox();
+            this.modeReferenceLabel = new System.Windows.Forms.Label();
+            this.TimeResolutionEditor = new WordGenerator.Controls.HorizontalParameterEditor();
+            this.timeResolutionLabel = new System.Windows.Forms.Label();
+            this.displayPulses = new System.Windows.Forms.CheckBox();
+            this.resize = new System.Windows.Forms.Button();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.orderingGroupComboBox = new System.Windows.Forms.ComboBox();
+            this.removeGroup = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -65,7 +94,7 @@ namespace WordGenerator.Controls
             // 
             this.pulseNameTextBox.Location = new System.Drawing.Point(70, 3);
             this.pulseNameTextBox.Name = "pulseNameTextBox";
-            this.pulseNameTextBox.Size = new System.Drawing.Size(100, 20);
+            this.pulseNameTextBox.Size = new System.Drawing.Size(232, 20);
             this.pulseNameTextBox.TabIndex = 0;
             this.pulseNameTextBox.TextChanged += new System.EventHandler(this.pulseNameTextBox_TextChanged);
             // 
@@ -73,14 +102,14 @@ namespace WordGenerator.Controls
             // 
             this.pulseDescriptionTextBox.Location = new System.Drawing.Point(70, 30);
             this.pulseDescriptionTextBox.Name = "pulseDescriptionTextBox";
-            this.pulseDescriptionTextBox.Size = new System.Drawing.Size(511, 20);
+            this.pulseDescriptionTextBox.Size = new System.Drawing.Size(497, 20);
             this.pulseDescriptionTextBox.TabIndex = 1;
             this.pulseDescriptionTextBox.TextChanged += new System.EventHandler(this.pulseDescriptionTextBox_TextChanged);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 6);
+            this.label1.Location = new System.Drawing.Point(30, 6);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(38, 13);
             this.label1.TabIndex = 2;
@@ -89,7 +118,7 @@ namespace WordGenerator.Controls
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(1, 33);
+            this.label2.Location = new System.Drawing.Point(5, 33);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(63, 13);
             this.label2.TabIndex = 3;
@@ -103,9 +132,12 @@ namespace WordGenerator.Controls
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.startCondition);
             this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Location = new System.Drawing.Point(14, 63);
+            this.groupBox1.Controls.Add(this.startConditionNew);
+            this.groupBox1.Controls.Add(this.startRelativeToStartOfPulse);
+            this.groupBox1.Controls.Add(this.startRelativeToEndOfPulse);
+            this.groupBox1.Location = new System.Drawing.Point(14, 73);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(275, 121);
+            this.groupBox1.Size = new System.Drawing.Size(270, 121);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Start Condition";
@@ -134,6 +166,15 @@ namespace WordGenerator.Controls
             this.startDelayed.UseVisualStyleBackColor = true;
             this.startDelayed.CheckedChanged += new System.EventHandler(this.startDelayed_CheckedChanged);
             // 
+            // startDelayTime
+            // 
+            this.startDelayTime.Location = new System.Drawing.Point(119, 65);
+            this.startDelayTime.Name = "startDelayTime";
+            this.startDelayTime.Size = new System.Drawing.Size(150, 22);
+            this.startDelayTime.TabIndex = 3;
+            this.startDelayTime.UnitSelectorVisibility = true;
+            this.startDelayTime.updateGUI += new System.EventHandler(this.updateAutoName);
+            // 
             // label4
             // 
             this.label4.AutoSize = true;
@@ -147,7 +188,7 @@ namespace WordGenerator.Controls
             // 
             this.startCondition.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.startCondition.FormattingEnabled = true;
-            this.startCondition.Location = new System.Drawing.Point(163, 16);
+            this.startCondition.Location = new System.Drawing.Point(158, 16);
             this.startCondition.Name = "startCondition";
             this.startCondition.Size = new System.Drawing.Size(106, 21);
             this.startCondition.TabIndex = 1;
@@ -162,6 +203,65 @@ namespace WordGenerator.Controls
             this.label3.TabIndex = 0;
             this.label3.Text = "Condition:";
             // 
+            // startConditionNew
+            // 
+            this.startConditionNew.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.startConditionNew.FormattingEnabled = true;
+            this.startConditionNew.Location = new System.Drawing.Point(158, 19);
+            this.startConditionNew.Name = "startConditionNew";
+            this.startConditionNew.Size = new System.Drawing.Size(106, 21);
+            this.startConditionNew.TabIndex = 1;
+            this.startConditionNew.DropDown += new System.EventHandler(this.startConditionNewComboBox_DropDown);
+            this.startConditionNew.SelectedIndexChanged += new System.EventHandler(this.startConditionNewComboBox_SelectedIndexChanged);
+            // 
+            // startRelativeToStartOfPulse
+            // 
+            this.startRelativeToStartOfPulse.AutoSize = true;
+            this.startRelativeToStartOfPulse.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.startRelativeToStartOfPulse.Location = new System.Drawing.Point(5, 42);
+            this.startRelativeToStartOfPulse.Name = "startRelativeToStartOfPulse";
+            this.startRelativeToStartOfPulse.Size = new System.Drawing.Size(146, 17);
+            this.startRelativeToStartOfPulse.TabIndex = 5;
+            this.startRelativeToStartOfPulse.Text = "Relative to start of pulse?";
+            this.startRelativeToStartOfPulse.UseVisualStyleBackColor = true;
+            this.startRelativeToStartOfPulse.CheckedChanged += new System.EventHandler(this.startRelativeToStartOfPulse_CheckedChanged);
+            // 
+            // startRelativeToEndOfPulse
+            // 
+            this.startRelativeToEndOfPulse.AutoSize = true;
+            this.startRelativeToEndOfPulse.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.startRelativeToEndOfPulse.Location = new System.Drawing.Point(161, 42);
+            this.startRelativeToEndOfPulse.Name = "startRelativeToEndOfPulse";
+            this.startRelativeToEndOfPulse.Size = new System.Drawing.Size(104, 17);
+            this.startRelativeToEndOfPulse.TabIndex = 5;
+            this.startRelativeToEndOfPulse.Text = "Or end of pulse?";
+            this.startRelativeToEndOfPulse.UseVisualStyleBackColor = true;
+            this.startRelativeToEndOfPulse.CheckedChanged += new System.EventHandler(this.startRelativeToEndOfPulse_CheckedChanged);
+            // 
+            // endRelativeToStartOfPulse
+            // 
+            this.endRelativeToStartOfPulse.AutoSize = true;
+            this.endRelativeToStartOfPulse.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.endRelativeToStartOfPulse.Location = new System.Drawing.Point(5, 42);
+            this.endRelativeToStartOfPulse.Name = "endRelativeToStartOfPulse";
+            this.endRelativeToStartOfPulse.Size = new System.Drawing.Size(146, 17);
+            this.endRelativeToStartOfPulse.TabIndex = 5;
+            this.endRelativeToStartOfPulse.Text = "Relative to start of pulse?";
+            this.endRelativeToStartOfPulse.UseVisualStyleBackColor = true;
+            this.endRelativeToStartOfPulse.CheckedChanged += new System.EventHandler(this.endRelativeToStartOfPulse_CheckedChanged);
+            // 
+            // endRelativeToEndOfPulse
+            // 
+            this.endRelativeToEndOfPulse.AutoSize = true;
+            this.endRelativeToEndOfPulse.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.endRelativeToEndOfPulse.Location = new System.Drawing.Point(161, 42);
+            this.endRelativeToEndOfPulse.Name = "endRelativeToEndOfPulse";
+            this.endRelativeToEndOfPulse.Size = new System.Drawing.Size(104, 17);
+            this.endRelativeToEndOfPulse.TabIndex = 5;
+            this.endRelativeToEndOfPulse.Text = "Or end of pulse?";
+            this.endRelativeToEndOfPulse.UseVisualStyleBackColor = true;
+            this.endRelativeToEndOfPulse.CheckedChanged += new System.EventHandler(this.endRelativeToEndOfPulse_CheckedChanged);
+            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.endDelayEnabled);
@@ -170,9 +270,12 @@ namespace WordGenerator.Controls
             this.groupBox2.Controls.Add(this.label5);
             this.groupBox2.Controls.Add(this.endCondition);
             this.groupBox2.Controls.Add(this.label6);
-            this.groupBox2.Location = new System.Drawing.Point(306, 63);
+            this.groupBox2.Controls.Add(this.endConditionNew);
+            this.groupBox2.Controls.Add(this.endRelativeToStartOfPulse);
+            this.groupBox2.Controls.Add(this.endRelativeToEndOfPulse);
+            this.groupBox2.Location = new System.Drawing.Point(297, 73);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(275, 121);
+            this.groupBox2.Size = new System.Drawing.Size(270, 121);
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "End Condition";
@@ -201,6 +304,15 @@ namespace WordGenerator.Controls
             this.endDelayed.UseVisualStyleBackColor = true;
             this.endDelayed.CheckedChanged += new System.EventHandler(this.endDelayed_CheckedChanged);
             // 
+            // endDelayTime
+            // 
+            this.endDelayTime.Location = new System.Drawing.Point(119, 65);
+            this.endDelayTime.Name = "endDelayTime";
+            this.endDelayTime.Size = new System.Drawing.Size(150, 22);
+            this.endDelayTime.TabIndex = 3;
+            this.endDelayTime.UnitSelectorVisibility = true;
+            this.endDelayTime.updateGUI += new System.EventHandler(this.updateAutoName);
+            // 
             // label5
             // 
             this.label5.AutoSize = true;
@@ -214,7 +326,7 @@ namespace WordGenerator.Controls
             // 
             this.endCondition.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.endCondition.FormattingEnabled = true;
-            this.endCondition.Location = new System.Drawing.Point(163, 16);
+            this.endCondition.Location = new System.Drawing.Point(158, 16);
             this.endCondition.Name = "endCondition";
             this.endCondition.Size = new System.Drawing.Size(106, 21);
             this.endCondition.TabIndex = 1;
@@ -228,6 +340,17 @@ namespace WordGenerator.Controls
             this.label6.Size = new System.Drawing.Size(54, 13);
             this.label6.TabIndex = 0;
             this.label6.Text = "Condition:";
+            // 
+            // endConditionNew
+            // 
+            this.endConditionNew.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.endConditionNew.FormattingEnabled = true;
+            this.endConditionNew.Location = new System.Drawing.Point(158, 19);
+            this.endConditionNew.Name = "endConditionNew";
+            this.endConditionNew.Size = new System.Drawing.Size(106, 21);
+            this.endConditionNew.TabIndex = 1;
+            this.endConditionNew.DropDown += new System.EventHandler(this.endConditionNewComboBox_DropDown);
+            this.endConditionNew.SelectedIndexChanged += new System.EventHandler(this.endConditionNewComboBox_SelectedIndexChanged);
             // 
             // label7
             // 
@@ -252,7 +375,7 @@ namespace WordGenerator.Controls
             // 
             // deleteButton
             // 
-            this.deleteButton.Location = new System.Drawing.Point(494, 240);
+            this.deleteButton.Location = new System.Drawing.Point(468, 241);
             this.deleteButton.Name = "deleteButton";
             this.deleteButton.Size = new System.Drawing.Size(99, 23);
             this.deleteButton.TabIndex = 10;
@@ -263,11 +386,11 @@ namespace WordGenerator.Controls
             // validityLabel
             // 
             this.validityLabel.AutoSize = true;
-            this.validityLabel.Location = new System.Drawing.Point(312, 224);
+            this.validityLabel.Location = new System.Drawing.Point(1, 283);
             this.validityLabel.Name = "validityLabel";
-            this.validityLabel.Size = new System.Drawing.Size(67, 13);
+            this.validityLabel.Size = new System.Drawing.Size(66, 13);
             this.validityLabel.TabIndex = 11;
-            this.validityLabel.Text = "Data Invalid!";
+            this.validityLabel.Text = "Data invalid!";
             // 
             // upButton
             // 
@@ -291,7 +414,7 @@ namespace WordGenerator.Controls
             // 
             // duplicateButton
             // 
-            this.duplicateButton.Location = new System.Drawing.Point(494, 214);
+            this.duplicateButton.Location = new System.Drawing.Point(468, 215);
             this.duplicateButton.Name = "duplicateButton";
             this.duplicateButton.Size = new System.Drawing.Size(99, 23);
             this.duplicateButton.TabIndex = 14;
@@ -326,7 +449,7 @@ namespace WordGenerator.Controls
             // autoNameCheckBox
             // 
             this.autoNameCheckBox.AutoSize = true;
-            this.autoNameCheckBox.Location = new System.Drawing.Point(177, 5);
+            this.autoNameCheckBox.Location = new System.Drawing.Point(308, 5);
             this.autoNameCheckBox.Name = "autoNameCheckBox";
             this.autoNameCheckBox.Size = new System.Drawing.Size(77, 17);
             this.autoNameCheckBox.TabIndex = 17;
@@ -343,29 +466,223 @@ namespace WordGenerator.Controls
             this.pulseDuration.UnitSelectorVisibility = true;
             this.pulseDuration.updateGUI += new System.EventHandler(this.updateAutoName);
             // 
-            // endDelayTime
+            // pulseType
             // 
-            this.endDelayTime.Location = new System.Drawing.Point(119, 65);
-            this.endDelayTime.Name = "endDelayTime";
-            this.endDelayTime.Size = new System.Drawing.Size(150, 22);
-            this.endDelayTime.TabIndex = 3;
-            this.endDelayTime.UnitSelectorVisibility = true;
-            this.endDelayTime.updateGUI += new System.EventHandler(this.updateAutoName);
+            this.pulseType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.pulseType.FormattingEnabled = true;
+            this.pulseType.Location = new System.Drawing.Point(388, 3);
+            this.pulseType.Name = "pulseType";
+            this.pulseType.Size = new System.Drawing.Size(110, 21);
+            this.pulseType.TabIndex = 18;
+            this.pulseType.DropDown += new System.EventHandler(this.pulseType_DropDown);
+            this.pulseType.SelectedIndexChanged += new System.EventHandler(this.pulseType_SelectedIndexChanged);
             // 
-            // startDelayTime
+            // label8
             // 
-            this.startDelayTime.Location = new System.Drawing.Point(119, 65);
-            this.startDelayTime.Name = "startDelayTime";
-            this.startDelayTime.Size = new System.Drawing.Size(150, 22);
-            this.startDelayTime.TabIndex = 3;
-            this.startDelayTime.UnitSelectorVisibility = true;
-            this.startDelayTime.updateGUI += new System.EventHandler(this.updateAutoName);
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            this.label8.Location = new System.Drawing.Point(1, 55);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(70, 13);
+            this.label8.TabIndex = 3;
+            this.label8.Text = "Old pulses:";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            this.label9.Location = new System.Drawing.Point(1, 55);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(76, 13);
+            this.label9.TabIndex = 3;
+            this.label9.Text = "New pulses:";
+            // 
+            // pulseGroup
+            // 
+            this.pulseGroup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.pulseGroup.FormattingEnabled = true;
+            this.pulseGroup.Location = new System.Drawing.Point(23, 224);
+            this.pulseGroup.Name = "pulseGroup";
+            this.pulseGroup.Size = new System.Drawing.Size(110, 21);
+            this.pulseGroup.TabIndex = 16;
+            this.pulseGroup.DropDown += new System.EventHandler(this.pulseGroupComboBox_DropDown);
+            this.pulseGroup.SelectedIndexChanged += new System.EventHandler(this.pulseGroupComboBox_SelectedIndexChanged);
+            // 
+            // pulseGroupLabel
+            // 
+            this.pulseGroupLabel.AutoSize = true;
+            this.pulseGroupLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            this.pulseGroupLabel.Location = new System.Drawing.Point(23, 206);
+            this.pulseGroupLabel.Name = "pulseGroupLabel";
+            this.pulseGroupLabel.Size = new System.Drawing.Size(100, 13);
+            this.pulseGroupLabel.TabIndex = 3;
+            this.pulseGroupLabel.Text = "Choose a group:";
+            // 
+            // pulseMode
+            // 
+            this.pulseMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.pulseMode.FormattingEnabled = true;
+            this.pulseMode.Location = new System.Drawing.Point(140, 250);
+            this.pulseMode.Name = "pulseMode";
+            this.pulseMode.Size = new System.Drawing.Size(110, 21);
+            this.pulseMode.TabIndex = 16;
+            this.pulseMode.DropDown += new System.EventHandler(this.pulseModeComboBox_DropDown);
+            this.pulseMode.SelectedIndexChanged += new System.EventHandler(this.pulseModeComboBox_SelectedIndexChanged);
+            // 
+            // pulseModeLabel
+            // 
+            this.pulseModeLabel.AutoSize = true;
+            this.pulseModeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            this.pulseModeLabel.Location = new System.Drawing.Point(23, 250);
+            this.pulseModeLabel.Name = "pulseModeLabel";
+            this.pulseModeLabel.Size = new System.Drawing.Size(98, 13);
+            this.pulseModeLabel.TabIndex = 3;
+            this.pulseModeLabel.Text = "Choose a mode:";
+            // 
+            // pulseChannelLabel
+            // 
+            this.pulseChannelLabel.AutoSize = true;
+            this.pulseChannelLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            this.pulseChannelLabel.Location = new System.Drawing.Point(140, 206);
+            this.pulseChannelLabel.Name = "pulseChannelLabel";
+            this.pulseChannelLabel.Size = new System.Drawing.Size(113, 13);
+            this.pulseChannelLabel.TabIndex = 3;
+            this.pulseChannelLabel.Text = "Choose a channel:";
+            // 
+            // pulseChannel
+            // 
+            this.pulseChannel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.pulseChannel.FormattingEnabled = true;
+            this.pulseChannel.Location = new System.Drawing.Point(140, 224);
+            this.pulseChannel.Name = "pulseChannel";
+            this.pulseChannel.Size = new System.Drawing.Size(110, 21);
+            this.pulseChannel.TabIndex = 16;
+            this.pulseChannel.DropDown += new System.EventHandler(this.pulseChannelComboBox_DropDown);
+            this.pulseChannel.SelectedIndexChanged += new System.EventHandler(this.pulseChannelComboBox_SelectedIndexChanged);
+            // 
+            // waveformGraphCollection1
+            // 
+            this.waveformGraphCollection1.AutoScroll = true;
+            this.waveformGraphCollection1.Location = new System.Drawing.Point(600, 1);
+            this.waveformGraphCollection1.Name = "waveformGraphCollection1";
+            this.waveformGraphCollection1.Size = new System.Drawing.Size(540, 262);
+            this.waveformGraphCollection1.TabIndex = 1;
+            // 
+            // disablePulse
+            // 
+            this.disablePulse.AutoSize = true;
+            this.disablePulse.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.disablePulse.Location = new System.Drawing.Point(293, 223);
+            this.disablePulse.Name = "disablePulse";
+            this.disablePulse.Size = new System.Drawing.Size(89, 17);
+            this.disablePulse.TabIndex = 5;
+            this.disablePulse.Text = "Disable pulse";
+            this.disablePulse.UseVisualStyleBackColor = true;
+            this.disablePulse.CheckedChanged += new System.EventHandler(this.disablePulse_CheckedChanged);
+            // 
+            // editWaveform
+            // 
+            this.editWaveform.Location = new System.Drawing.Point(657, 265);
+            this.editWaveform.Name = "editWaveform";
+            this.editWaveform.Size = new System.Drawing.Size(99, 23);
+            this.editWaveform.TabIndex = 13;
+            this.editWaveform.Text = "Edit Waveform";
+            this.editWaveform.UseVisualStyleBackColor = true;
+            this.editWaveform.Click += new System.EventHandler(this.editWaveform_Click);
+            // 
+            // modeReference
+            // 
+            this.modeReference.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.modeReference.FormattingEnabled = true;
+            this.modeReference.Location = new System.Drawing.Point(23, 224);
+            this.modeReference.Name = "modeReference";
+            this.modeReference.Size = new System.Drawing.Size(110, 21);
+            this.modeReference.TabIndex = 16;
+            this.modeReference.DropDown += new System.EventHandler(this.modeReferenceComboBox_DropDown);
+            this.modeReference.SelectedIndexChanged += new System.EventHandler(this.modeReferenceComboBox_SelectedIndexChanged);
+            // 
+            // modeReferenceLabel
+            // 
+            this.modeReferenceLabel.AutoSize = true;
+            this.modeReferenceLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            this.modeReferenceLabel.Location = new System.Drawing.Point(23, 206);
+            this.modeReferenceLabel.Name = "modeReferenceLabel";
+            this.modeReferenceLabel.Size = new System.Drawing.Size(219, 13);
+            this.modeReferenceLabel.TabIndex = 3;
+            this.modeReferenceLabel.Text = "Choose a mode to import pulses from:";
+            // 
+            // TimeResolutionEditor
+            // 
+            this.TimeResolutionEditor.Location = new System.Drawing.Point(859, 266);
+            this.TimeResolutionEditor.Name = "TimeResolutionEditor";
+            this.TimeResolutionEditor.Size = new System.Drawing.Size(133, 22);
+            this.TimeResolutionEditor.TabIndex = 19;
+            this.TimeResolutionEditor.UnitSelectorVisibility = true;
+            // 
+            // timeResolutionLabel
+            // 
+            this.timeResolutionLabel.AutoSize = true;
+            this.timeResolutionLabel.Location = new System.Drawing.Point(767, 270);
+            this.timeResolutionLabel.Name = "timeResolutionLabel";
+            this.timeResolutionLabel.Size = new System.Drawing.Size(86, 13);
+            this.timeResolutionLabel.TabIndex = 20;
+            this.timeResolutionLabel.Text = "Time Resolution:";
+            // 
+            // displayPulses
+            // 
+            this.displayPulses.AutoSize = true;
+            this.displayPulses.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.displayPulses.Location = new System.Drawing.Point(293, 205);
+            this.displayPulses.Name = "displayPulses";
+            this.displayPulses.Size = new System.Drawing.Size(93, 17);
+            this.displayPulses.TabIndex = 5;
+            this.displayPulses.Text = "Display pulses";
+            this.displayPulses.UseVisualStyleBackColor = true;
+            this.displayPulses.CheckedChanged += new System.EventHandler(this.displayPulses_CheckedChanged);
+            // 
+            // resize
+            // 
+            this.resize.Location = new System.Drawing.Point(3, 1);
+            this.resize.Name = "resize";
+            this.resize.Size = new System.Drawing.Size(25, 25);
+            this.resize.TabIndex = 13;
+            this.resize.Text = "\\/";
+            this.toolTip1.SetToolTip(this.resize, "Resize the pulse window.");
+            this.resize.UseVisualStyleBackColor = true;
+            this.resize.Click += new System.EventHandler(this.resize_Click);
+            // 
+            // orderingGroupComboBox
+            // 
+            this.orderingGroupComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.orderingGroupComboBox.FormattingEnabled = true;
+            this.orderingGroupComboBox.Location = new System.Drawing.Point(297, 241);
+            this.orderingGroupComboBox.Name = "orderingGroupComboBox";
+            this.orderingGroupComboBox.Size = new System.Drawing.Size(72, 21);
+            this.orderingGroupComboBox.TabIndex = 17;
+            this.toolTip1.SetToolTip(this.orderingGroupComboBox, "Select an ordering group for this pulse.");
+            this.orderingGroupComboBox.DropDown += new System.EventHandler(this.orderingGroupComboBox_DropDown);
+            this.orderingGroupComboBox.SelectedIndexChanged += new System.EventHandler(this.orderingGroupComboBox_SelectedIndexChanged);
+            // 
+            // removeGroup
+            // 
+            this.removeGroup.Location = new System.Drawing.Point(377, 241);
+            this.removeGroup.Name = "removeGroup";
+            this.removeGroup.Size = new System.Drawing.Size(55, 21);
+            this.removeGroup.TabIndex = 3;
+            this.removeGroup.TabStop = false;
+            this.removeGroup.Text = "Remove";
+            this.toolTip1.SetToolTip(this.removeGroup, "Remove this pulse from its current ordering group.");
+            this.removeGroup.UseVisualStyleBackColor = true;
+            this.removeGroup.Click += new System.EventHandler(this.removeGroup_Click);
             // 
             // PulseEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSize = true;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Controls.Add(this.timeResolutionLabel);
+            this.Controls.Add(this.TimeResolutionEditor);
             this.Controls.Add(this.autoNameCheckBox);
             this.Controls.Add(this.valueVariableComboBox);
             this.Controls.Add(this.getValueFromVariableCheckBox);
@@ -383,8 +700,26 @@ namespace WordGenerator.Controls
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pulseDescriptionTextBox);
             this.Controls.Add(this.pulseNameTextBox);
+            this.Controls.Add(this.pulseType);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.pulseGroup);
+            this.Controls.Add(this.pulseGroupLabel);
+            this.Controls.Add(this.pulseMode);
+            this.Controls.Add(this.pulseModeLabel);
+            this.Controls.Add(this.pulseChannelLabel);
+            this.Controls.Add(this.pulseChannel);
+            this.Controls.Add(this.waveformGraphCollection1);
+            this.Controls.Add(this.disablePulse);
+            this.Controls.Add(this.editWaveform);
+            this.Controls.Add(this.modeReference);
+            this.Controls.Add(this.modeReferenceLabel);
+            this.Controls.Add(this.displayPulses);
+            this.Controls.Add(this.resize);
+            this.Controls.Add(this.orderingGroupComboBox);
+            this.Controls.Add(this.removeGroup);
             this.Name = "PulseEditor";
-            this.Size = new System.Drawing.Size(597, 267);
+            this.Size = new System.Drawing.Size(1143, 302);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -427,5 +762,33 @@ namespace WordGenerator.Controls
         private System.Windows.Forms.CheckBox getValueFromVariableCheckBox;
         private System.Windows.Forms.ComboBox valueVariableComboBox;
         private System.Windows.Forms.CheckBox autoNameCheckBox;
+        //New pulse parameters
+        private System.Windows.Forms.ComboBox pulseType;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.ComboBox startConditionNew;
+        private System.Windows.Forms.ComboBox endConditionNew;
+        private System.Windows.Forms.ComboBox pulseGroup;
+        private System.Windows.Forms.Label pulseGroupLabel;
+        private System.Windows.Forms.ComboBox pulseMode;
+        private System.Windows.Forms.Label pulseModeLabel;
+        private System.Windows.Forms.Label pulseChannelLabel;
+        private System.Windows.Forms.ComboBox pulseChannel;
+        private WordGenerator.Controls.WaveformGraphCollection waveformGraphCollection1;
+        private System.Windows.Forms.CheckBox startRelativeToStartOfPulse;
+        private System.Windows.Forms.CheckBox startRelativeToEndOfPulse;
+        private System.Windows.Forms.CheckBox endRelativeToStartOfPulse;
+        private System.Windows.Forms.CheckBox endRelativeToEndOfPulse;
+        private System.Windows.Forms.CheckBox disablePulse;
+        private System.Windows.Forms.Button editWaveform;
+        private System.Windows.Forms.Label modeReferenceLabel;
+        private System.Windows.Forms.ComboBox modeReference;
+        private HorizontalParameterEditor TimeResolutionEditor;
+        private System.Windows.Forms.Label timeResolutionLabel;
+        private System.Windows.Forms.CheckBox displayPulses;
+        private System.Windows.Forms.Button resize;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.ComboBox orderingGroupComboBox;
+        private System.Windows.Forms.Button removeGroup;
     }
 }

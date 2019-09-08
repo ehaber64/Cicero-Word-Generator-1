@@ -58,7 +58,8 @@ namespace WordGenerator.Controls
                             pulseSelectBox.Items.Add("None.");
                             foreach (Pulse pulse in Storage.sequenceData.DigitalPulses)
                             {
-                                pulseSelectBox.Items.Add(pulse);
+                                if (pulse.pulseType == Pulse.PulseType.OldDigital)
+                                    pulseSelectBox.Items.Add(pulse);
                             }
                             pulseSelectBox.Width = colWidth;
                             pulseSelectBox.Height = rowHeight;
@@ -929,7 +930,6 @@ namespace WordGenerator.Controls
         private void InitializeComponent()
         {
             this.SuspendLayout();
-
             // 
             // DigitalGrid
             // 
@@ -943,55 +943,55 @@ namespace WordGenerator.Controls
 
 
         /* OpenGL Code -- Experimental */
-/*
-        bool glLoaded = false;
-        private void glControl1_Load(object sender, EventArgs e)
-        {
-            glLoaded = true;
-            glControl1.MakeCurrent();
+        /*
+                bool glLoaded = false;
+                private void glControl1_Load(object sender, EventArgs e)
+                {
+                    glLoaded = true;
+                    glControl1.MakeCurrent();
 
-            glControlUpdateSize();
-
-
-        }
-
-        private void glControlUpdateSize()
-        {
-            if (glLoaded)
-            {
-                int w = glControl1.Width;
-                int h = glControl1.Height;
-                GL.MatrixMode(MatrixMode.Projection);
-                GL.LoadIdentity();
-                GL.Ortho(0, w, h, 0, -1, 1);
-                GL.Viewport(0, 0, w, h);
-            }
-        }
-
-        private void glControl1_SizeChanged(object sender, EventArgs e)
-        {
-            if (glLoaded)
-            {
-                glControl1.MakeCurrent();
-
-                glControlUpdateSize();
-            }
-        }
-
-        private void glControl1_Paint(object sender, PaintEventArgs e)
-        {
-            if (glLoaded)
-            {
-                glControl1.MakeCurrent();
+                    glControlUpdateSize();
 
 
-                GL.ClearColor(Color.Blue);
-                GL.Clear(ClearBufferMask.ColorBufferBit);
+                }
 
-                glControl1.SwapBuffers();
-            }
-        }
-        */
+                private void glControlUpdateSize()
+                {
+                    if (glLoaded)
+                    {
+                        int w = glControl1.Width;
+                        int h = glControl1.Height;
+                        GL.MatrixMode(MatrixMode.Projection);
+                        GL.LoadIdentity();
+                        GL.Ortho(0, w, h, 0, -1, 1);
+                        GL.Viewport(0, 0, w, h);
+                    }
+                }
+
+                private void glControl1_SizeChanged(object sender, EventArgs e)
+                {
+                    if (glLoaded)
+                    {
+                        glControl1.MakeCurrent();
+
+                        glControlUpdateSize();
+                    }
+                }
+
+                private void glControl1_Paint(object sender, PaintEventArgs e)
+                {
+                    if (glLoaded)
+                    {
+                        glControl1.MakeCurrent();
+
+
+                        GL.ClearColor(Color.Blue);
+                        GL.Clear(ClearBufferMask.ColorBufferBit);
+
+                        glControl1.SwapBuffers();
+                    }
+                }
+                */
 
 
 

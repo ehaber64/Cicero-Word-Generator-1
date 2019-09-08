@@ -15,7 +15,7 @@ namespace DataStructures
     public abstract class ServerCommunicator : MarshalByRefObject
     {
 
-        public enum BufferGenerationStatus { Success, Failed_Out_Of_Memory, Failed_Invalid_Data, Failed_Settings_Null, Failed_Sequence_Null, Failed_Buffer_Underrun };
+        public enum BufferGenerationStatus { Success, Failed_Out_Of_Memory, Failed_Invalid_Data, Failed_Settings_Null, Failed_Sequence_Null, Failed_Buffer_Underrun, Failed_AnalogInCheck };
 
 
         public abstract void nextRunTimeStamp(DateTime timeStamp);
@@ -79,6 +79,19 @@ namespace DataStructures
         public abstract BufferGenerationStatus generateBuffers(int listIterationNumber);
 
         /// <summary>
+        /// Checks the values of all analog input channels that the user has designated for checking before the sequence is run.
+        /// </summary>
+        /// <param name="sequence">Sequence data that will be passed to Atticus.</param>
+        /// <returns></returns>
+        public abstract BufferGenerationStatus CheckAnalogInput(SequenceData sequence);
+
+        /// <summary>
+        /// Saves the server settings in a file specified by the input path.
+        /// </summary>
+        /// <param name="path">Absolute path of the server settings file to be created.</param>
+        public abstract void SaveServerSettings(string path);
+
+        /// <summary>
         /// Generates a triggers. This in effect starts the sequence output.
         /// </summary>
         public abstract bool generateTrigger();
@@ -103,6 +116,5 @@ namespace DataStructures
         public abstract bool ping();
 
         public abstract void stop();
-
     }
 }

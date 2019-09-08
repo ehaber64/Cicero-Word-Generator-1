@@ -161,6 +161,16 @@ namespace DataStructures
             return units.multiplier * parameter.getValue();
         }
 
+        /// <summary>
+        /// This shameful method returns the correct base value of a waveform's extra parameter. There is a bug somewhere in the code for saving extra parameters of a waveform.
+        /// </summary>
+        /// <param name="variableValues"></param>
+        /// <returns></returns>
+        public double getParameterBaseValue()
+        {
+            return getBaseValue() / ParameterUnits.multiplier.getMultiplierFactor();
+        }
+
         /*     /// <summary>
              /// Returns an array of manual base values corresponding to the manual values of
              /// the DimensionedParameters in the list.

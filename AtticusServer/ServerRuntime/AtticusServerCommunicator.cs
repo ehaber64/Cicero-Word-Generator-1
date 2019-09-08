@@ -633,7 +633,9 @@ namespace AtticusServer
 					//First we determine if an analog in task should be created
                     foreach (DeviceSettings ds in AtticusServer.server.serverSettings.myDevicesSettings.Values)
                     {
-                        analogInCardDetected |= (ds.DeviceDescription.Contains("6259") || ds.DeviceDescription.Contains("6363")) && ds.AnalogInEnabled; // program will also support PXIe-6363 cards
+                        // analogInCardDetected |= (ds.DeviceDescription.Contains("6259") || ds.DeviceDescription.Contains("6363")) && ds.AnalogInEnabled; // program will also support PXIe-6363 cards
+                        // Only check that at least one analog channel is setup for input, since we don't use either the PXI-6259 or the 6363
+                        analogInCardDetected |= ds.AnalogInEnabled;
                     }
 
                     if (analogInCardDetected)
@@ -642,7 +644,6 @@ namespace AtticusServer
                         analogS7ReadTask = new Task();
                         analogS7ReadTask.SynchronizeCallbacks = false;
                         analog_in_names = new List<string>();
-                        // bool isUsed; // adareau : now obsolete
 
                         #region Old Code
                        // // Obtains a list of the analog in channels to be included in the task, and their name
@@ -711,7 +712,7 @@ namespace AtticusServer
 
                         foreach (AnalogInChannels aiChannel in channels_list)
                         {
-                            if (aiChannel.UseChannel)
+                            if (aiChannel.UseChannel || aiChannel.DoComparison)
                             {
                                 if (aiChannel.AnalogInChannelType == AnalogInChannels.AnalogInChannelTypeList.SingleEnded)
                                 {
@@ -734,7 +735,6 @@ namespace AtticusServer
                         }
 
                         #endregion
-                        
 
                         // Configure timing specs of the analog In task. Again these things shouldn't be hard coded and will be changed    
                         analogS7ReadTask.Timing.ConfigureSampleClock("", (double)(AtticusServer.server.serverSettings.AIFrequency), SampleClockActiveEdge.Rising,
@@ -892,8 +892,102 @@ namespace AtticusServer
 
         }
 
+        public override void SaveServerSettings(string path)
+        {
+            AtticusServer.saveServerSettings(path, AtticusServer.server.serverSettings);
+        }
+
+        public override BufferGenerationStatus CheckAnalogInput(SequenceData sequence)
+        {
+            #region New Code
+            Task analogS7ReadTask = new Task();
+            analogS7ReadTask.SynchronizeCallbacks = false;
+            List<string> analog_in_names = new List<string>();
+            AnalogMultiChannelReader reader_analog_S7;
+
+            List<AnalogInChannels> channels_list = AtticusServer.server.serverSettings.AIChannels;
+            foreach (AnalogInChannels aiChannel in channels_list)
+            {
+                if (aiChannel.DoComparison)
+                {
+                    if (aiChannel.AnalogInChannelType == AnalogInChannels.AnalogInChannelTypeList.SingleEnded)
+                    {
+                        analogS7ReadTask.AIChannels.CreateVoltageChannel(AtticusServer.server.serverSettings.AIDev + "/" + aiChannel.ChannelName, "",
+                          AITerminalConfiguration.Nrse, -10, 10, AIVoltageUnits.Volts);
+                    }
+
+                    else if (aiChannel.AnalogInChannelType == AnalogInChannels.AnalogInChannelTypeList.Differential)
+                    {
+                        analogS7ReadTask.AIChannels.CreateVoltageChannel(AtticusServer.server.serverSettings.AIDev + "/" + aiChannel.ChannelName, "",
+                         AITerminalConfiguration.Differential, -10, 10, AIVoltageUnits.Volts);
+                    }
+
+                    string theName = aiChannel.SaveName;
+                    analog_in_names.Add(theName);
+
+                }
+
+
+            }
+
+            // See if any of the AI channels need to be checked before running the sequence
+            // Throw error if any of the channels are outside their allowed ranges
+            if (analog_in_names.Count > 0)
+            {
+                // Store the current value of each AI channel in the variable data
+                reader_analog_S7 = new AnalogMultiChannelReader(analogS7ReadTask.Stream);
+                double[] data = reader_analog_S7.ReadSingleSample();
+                bool failure = false;   //Store whether or not a failure occurs in any of the channels
+                                        //so that each channel can be checked before error is thrown
+                                        // Run through each channel to check if a comparison must be performed
+                for (int ind = 0; ind < channels_list.Count; ind++)
+                {
+                    if (channels_list[ind].DoComparison)
+                    {
+                        bool comparison = false;
+                        string comparisonType = "greater than";
+                        if (channels_list[ind].ComparisonType == AnalogInChannels.ComparisonTypeList.Greater)
+                        {
+                            comparison = data[ind] > channels_list[ind].ComparisonValue;
+                        }
+                        else if (channels_list[ind].ComparisonType == AnalogInChannels.ComparisonTypeList.Less)
+                        {
+                            comparison = data[ind] < channels_list[ind].ComparisonValue;
+                            comparisonType = "less than";
+                        }
+                        else if (channels_list[ind].ComparisonType == AnalogInChannels.ComparisonTypeList.GreaterOrEqual)
+                        {
+                            comparison = data[ind] >= channels_list[ind].ComparisonValue;
+                            comparisonType = "greater than or equal to";
+                        }
+                        else if (channels_list[ind].ComparisonType == AnalogInChannels.ComparisonTypeList.LessOrEqual)
+                        {
+                            comparison = data[ind] <= channels_list[ind].ComparisonValue;
+                            comparisonType = "less than or equal to";
+                        }
+                        if (!comparison)
+                        {
+                            messageLog(this, new MessageEvent("********** Error. Analog input channel " + channels_list[ind].Label +
+                                " has a value " + data[ind].ToString() + ", which is not " + comparisonType.ToString() + " " +
+                                channels_list[ind].ComparisonValue.ToString() + ". **********"));
+                            displayError();
+                            failure = true;
+                        }
+                    }
+                }
+                if (failure)
+                {
+                    return BufferGenerationStatus.Failed_AnalogInCheck;
+                }
+            }
+
+            #endregion
+
+            return BufferGenerationStatus.Success;
+        }
+
         /// <summary>
-        /// A flag as to weather any of the tasks have thrown an error while running. This flag gets set by aTaskFinished eventhandler, and
+        /// A flag as to whether any of the tasks have thrown an error while running. This flag gets set by aTaskFinished eventhandler, and
         /// gets cleared by stopAndCleanupTasks()
         /// </summary>
         private bool taskErrorsDetected = false;

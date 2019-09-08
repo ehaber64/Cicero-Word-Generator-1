@@ -106,6 +106,17 @@ namespace WordGenerator.ChannelManager
             lc.Description = this.deviceDescText.Text;
             lc.AnalogChannelOutputNowUsesDwellWord = checkBox1.Checked;
             lc.TogglingChannel = togglingCheck.Checked;
+            int ID = selectedChannelCollection.GetNextSuggestedKey();
+            lc.OrderingGroup = orderingGroups.SelectedItem as String;
+            //If turnOffBox is checked, add this channel to the set of channels to be turned off
+            //if the analog input check fails
+            if (turnOffBox.Checked)
+            {
+                if (!Storage.settingsData.ChannelsToTurnOff[lc.HardwareChannel.ChannelType].ContainsKey(ID))
+                    Storage.settingsData.ChannelsToTurnOff[lc.HardwareChannel.ChannelType].Add(ID, lc);
+            }
+            else
+            { Storage.settingsData.ChannelsToTurnOff[lc.HardwareChannel.ChannelType].Remove(ID); }
 
             if (this.availableHardwareChanCombo.SelectedItem is HardwareChannel)
                 lc.HardwareChannel = (HardwareChannel)this.availableHardwareChanCombo.SelectedItem;
@@ -127,6 +138,26 @@ namespace WordGenerator.ChannelManager
             
         }
 
+        private void turnOff_CheckedChanged(object sender, EventArgs e)
+        {
 
+        }
+
+        private void populateOrderingGroupComboBox()
+        {
+            if (Storage.sequenceData != null)
+            {
+                orderingGroups.Items.Clear();
+                List<String> sortedGroups = new List<String>(Storage.sequenceData.OrderingGroups[SequenceData.OrderingGroupTypes.LogicalChannels]);
+                sortedGroups.Sort();
+                foreach (String group in sortedGroups)
+                    orderingGroups.Items.Add(group);
+            }
+        }
+
+        private void orderingGroupsComboBox_DropDown(object sender, EventArgs e)
+        {
+            populateOrderingGroupComboBox();
+        }
     }
 }

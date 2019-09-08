@@ -77,15 +77,19 @@
     </Reference>
     <Reference Include="NationalInstruments.Common, Version=9.1.35.159, Culture=neutral, PublicKeyToken=18cbae0f9955702a, processorArchitecture=MSIL">
       <Private>True</Private>
+      <HintPath>..\..\..\..\..\..\..\Documents\Cicero-Word-Generator-1.64rev7\Atticus\x64\NationalInstruments.Common.dll</HintPath>
     </Reference>
     <Reference Include="NationalInstruments.DAQmx, Version=9.3.35.219, Culture=neutral, PublicKeyToken=18cbae0f9955702a, processorArchitecture=x86">
       <Private>True</Private>
+      <HintPath>..\..\..\..\..\..\..\Documents\Cicero-Word-Generator-1.64rev7\Atticus\x64\NationalInstruments.DAQmx.dll</HintPath>
     </Reference>
     <Reference Include="NationalInstruments.NI4882, Version=9.0.35.157, Culture=neutral, PublicKeyToken=18cbae0f9955702a, processorArchitecture=MSIL">
       <Private>True</Private>
+      <HintPath>..\..\..\..\..\..\..\Documents\Cicero-Word-Generator-1.64rev7\Atticus\x64\NationalInstruments.NI4882.dll</HintPath>
     </Reference>
     <Reference Include="NationalInstruments.VisaNS, Version=9.0.35.156, Culture=neutral, PublicKeyToken=18cbae0f9955702a, processorArchitecture=MSIL">
       <Private>True</Private>
+      <HintPath>..\..\..\..\..\..\..\Documents\Cicero-Word-Generator-1.64rev7\Atticus\x64\NationalInstruments.VisaNS.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

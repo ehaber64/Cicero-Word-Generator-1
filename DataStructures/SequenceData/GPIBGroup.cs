@@ -61,6 +61,43 @@ namespace DataStructures
             return ans;
         }
 
+        private bool userGPIBGroup = false;
+
+        public bool UserGPIBGroup
+        {
+            get { return userGPIBGroup; }
+            set { userGPIBGroup = value; }
+        }
+
+        public void Copy(GPIBGroup copyMe)
+        {
+            GroupName = "Copy of " + copyMe.GroupName;
+            UserGPIBGroup = copyMe.UserGPIBGroup;
+            GroupDescription = copyMe.GroupDescription;
+            foreach (int channelID in copyMe.getChannelIDs())
+            {
+                if (!channelExists(channelID))
+                { addChannel(channelID); }
+                ChannelDatas[channelID].Enabled = copyMe.ChannelDatas[channelID].Enabled;
+                ChannelDatas[channelID].DataType = copyMe.ChannelDatas[channelID].DataType;
+                if (ChannelDatas[channelID].DataType == GPIBGroupChannelData.GpibChannelDataType.voltage_frequency_waveform)
+                {
+                    ChannelDatas[channelID].volts.DeepCopyWaveform(copyMe.ChannelDatas[channelID].volts);
+                    ChannelDatas[channelID].frequency.DeepCopyWaveform(copyMe.ChannelDatas[channelID].frequency);
+                }
+                else if (ChannelDatas[channelID].DataType == GPIBGroupChannelData.GpibChannelDataType.raw_string)
+                { ChannelDatas[channelID].RawString = copyMe.ChannelDatas[channelID].RawString; }
+                else if (ChannelDatas[channelID].DataType == GPIBGroupChannelData.GpibChannelDataType.string_param_string)
+                {
+                    List<StringParameterString> parameters = new List<StringParameterString>();
+                    foreach (StringParameterString param in copyMe.ChannelDatas[channelID].StringParameterStrings)
+                    { parameters.Add(param); }
+                    ChannelDatas[channelID].StringParameterStrings = parameters;
+                 }
+            }
+
+        }
+
     }
 
 

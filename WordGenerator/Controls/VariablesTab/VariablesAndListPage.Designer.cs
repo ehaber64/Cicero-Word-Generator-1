@@ -28,6 +28,7 @@ namespace WordGenerator.Controls
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.variablesPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
@@ -62,6 +63,15 @@ namespace WordGenerator.Controls
             this.listFillerButton = new System.Windows.Forms.Button();
             this.listFillerSelector = new System.Windows.Forms.ComboBox();
             this.LockMessage = new System.Windows.Forms.Label();
+            this.sortVariables = new System.Windows.Forms.CheckBox();
+            this.sortMethods = new System.Windows.Forms.ComboBox();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.deleteOrderingGroupButton = new System.Windows.Forms.Button();
+            this.createOrderingGroupButton = new System.Windows.Forms.Button();
+            this.orderingGroupTextBox = new System.Windows.Forms.TextBox();
+            this.orderingGroupComboBox = new System.Windows.Forms.ComboBox();
+            this.orderVariablesList = new System.Windows.Forms.Label();
+            this.orderByGroup = new System.Windows.Forms.CheckBox();
             this.listEditorPanelPlaceholder = new WordGenerator.Controls.ListEditorPanel();
             this.runControl1 = new WordGenerator.Controls.RunControl();
             this.variablesPanel.SuspendLayout();
@@ -83,16 +93,16 @@ namespace WordGenerator.Controls
             this.variablesPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.variablesPanel.Location = new System.Drawing.Point(3, 0);
             this.variablesPanel.Name = "variablesPanel";
-            this.variablesPanel.Size = new System.Drawing.Size(235, 701);
+            this.variablesPanel.Size = new System.Drawing.Size(293, 701);
             this.variablesPanel.TabIndex = 0;
             // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 4;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 32.71028F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 67.28972F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 53F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 103F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 22F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 105F));
             this.tableLayoutPanel1.Controls.Add(this.label1, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.label2, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.nameLabel, 1, 0);
@@ -101,13 +111,14 @@ namespace WordGenerator.Controls
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(229, 19);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 19F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(287, 19);
             this.tableLayoutPanel1.TabIndex = 5;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(75, 0);
+            this.label1.Location = new System.Drawing.Point(105, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(34, 13);
             this.label1.TabIndex = 1;
@@ -125,7 +136,7 @@ namespace WordGenerator.Controls
             // nameLabel
             // 
             this.nameLabel.AutoSize = true;
-            this.nameLabel.Location = new System.Drawing.Point(26, 0);
+            this.nameLabel.Location = new System.Drawing.Point(25, 0);
             this.nameLabel.Name = "nameLabel";
             this.nameLabel.Size = new System.Drawing.Size(35, 13);
             this.nameLabel.TabIndex = 0;
@@ -134,11 +145,11 @@ namespace WordGenerator.Controls
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(128, 0);
+            this.label3.Location = new System.Drawing.Point(185, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(55, 13);
+            this.label3.Size = new System.Drawing.Size(97, 13);
             this.label3.TabIndex = 4;
-            this.label3.Text = "Equation?";
+            this.label3.Text = "Equation or group?";
             // 
             // variableEditorPlaceholder
             // 
@@ -151,7 +162,7 @@ namespace WordGenerator.Controls
             // 
             // addButton
             // 
-            this.addButton.Location = new System.Drawing.Point(24, 74);
+            this.addButton.Location = new System.Drawing.Point(24, 89);
             this.addButton.Name = "addButton";
             this.addButton.Size = new System.Drawing.Size(55, 34);
             this.addButton.TabIndex = 1;
@@ -306,12 +317,12 @@ namespace WordGenerator.Controls
             this.panel1.Controls.Add(this.variablesPanel);
             this.panel1.Location = new System.Drawing.Point(24, 132);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(272, 741);
+            this.panel1.Size = new System.Drawing.Size(296, 741);
             this.panel1.TabIndex = 7;
             // 
             // equationHelpButton
             // 
-            this.equationHelpButton.Location = new System.Drawing.Point(158, 74);
+            this.equationHelpButton.Location = new System.Drawing.Point(158, 89);
             this.equationHelpButton.Name = "equationHelpButton";
             this.equationHelpButton.Size = new System.Drawing.Size(57, 34);
             this.equationHelpButton.TabIndex = 8;
@@ -321,7 +332,7 @@ namespace WordGenerator.Controls
             // 
             // permanentVariablesButton
             // 
-            this.permanentVariablesButton.Location = new System.Drawing.Point(82, 74);
+            this.permanentVariablesButton.Location = new System.Drawing.Point(82, 89);
             this.permanentVariablesButton.Name = "permanentVariablesButton";
             this.permanentVariablesButton.Size = new System.Drawing.Size(73, 34);
             this.permanentVariablesButton.TabIndex = 9;
@@ -454,6 +465,95 @@ namespace WordGenerator.Controls
             this.LockMessage.Size = new System.Drawing.Size(0, 13);
             this.LockMessage.TabIndex = 11;
             // 
+            // sortVariables
+            // 
+            this.sortVariables.AutoSize = true;
+            this.sortVariables.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.sortVariables.Location = new System.Drawing.Point(218, 95);
+            this.sortVariables.Name = "sortVariables";
+            this.sortVariables.Size = new System.Drawing.Size(105, 17);
+            this.sortVariables.TabIndex = 2;
+            this.sortVariables.Text = "Sort variables list";
+            this.sortVariables.UseVisualStyleBackColor = true;
+            this.sortVariables.CheckedChanged += new System.EventHandler(this.sortVariables_CheckedChanged);
+            // 
+            // sortMethods
+            // 
+            this.sortMethods.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.sortMethods.FormattingEnabled = true;
+            this.sortMethods.Location = new System.Drawing.Point(218, 73);
+            this.sortMethods.Name = "sortMethods";
+            this.sortMethods.Size = new System.Drawing.Size(105, 21);
+            this.sortMethods.TabIndex = 5;
+            this.toolTip1.SetToolTip(this.sortMethods, "Select a method for sorting the variables.");
+            this.sortMethods.DropDown += new System.EventHandler(this.sortMethods_DropDown);
+            this.sortMethods.SelectedIndexChanged += new System.EventHandler(this.sortMethods_SelectedIndexChanged);
+            // 
+            // deleteOrderingGroupButton
+            // 
+            this.deleteOrderingGroupButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.deleteOrderingGroupButton.Location = new System.Drawing.Point(276, 22);
+            this.deleteOrderingGroupButton.Name = "deleteOrderingGroupButton";
+            this.deleteOrderingGroupButton.Size = new System.Drawing.Size(47, 20);
+            this.deleteOrderingGroupButton.TabIndex = 19;
+            this.deleteOrderingGroupButton.Text = "Delete";
+            this.toolTip1.SetToolTip(this.deleteOrderingGroupButton, "Delete the current ordering group.");
+            this.deleteOrderingGroupButton.UseVisualStyleBackColor = true;
+            this.deleteOrderingGroupButton.Click += new System.EventHandler(this.deleteOrderingGroupButton_Click);
+            // 
+            // createOrderingGroupButton
+            // 
+            this.createOrderingGroupButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.createOrderingGroupButton.Location = new System.Drawing.Point(276, 48);
+            this.createOrderingGroupButton.Name = "createOrderingGroupButton";
+            this.createOrderingGroupButton.Size = new System.Drawing.Size(47, 20);
+            this.createOrderingGroupButton.TabIndex = 21;
+            this.createOrderingGroupButton.Text = "Create";
+            this.toolTip1.SetToolTip(this.createOrderingGroupButton, "Create a new ordering group with the input name.");
+            this.createOrderingGroupButton.UseVisualStyleBackColor = true;
+            this.createOrderingGroupButton.Click += new System.EventHandler(this.createOrderingGroupButton_Click);
+            // 
+            // orderingGroupTextBox
+            // 
+            this.orderingGroupTextBox.Location = new System.Drawing.Point(200, 48);
+            this.orderingGroupTextBox.Name = "orderingGroupTextBox";
+            this.orderingGroupTextBox.Size = new System.Drawing.Size(73, 20);
+            this.orderingGroupTextBox.TabIndex = 20;
+            this.toolTip1.SetToolTip(this.orderingGroupTextBox, "Enter name of new ordering group.");
+            // 
+            // orderingGroupComboBox
+            // 
+            this.orderingGroupComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.orderingGroupComboBox.FormattingEnabled = true;
+            this.orderingGroupComboBox.Location = new System.Drawing.Point(200, 21);
+            this.orderingGroupComboBox.Name = "orderingGroupComboBox";
+            this.orderingGroupComboBox.Size = new System.Drawing.Size(73, 21);
+            this.orderingGroupComboBox.TabIndex = 17;
+            this.toolTip1.SetToolTip(this.orderingGroupComboBox, "Select the ordering group to delete.");
+            this.orderingGroupComboBox.DropDown += new System.EventHandler(this.orderingGroupComboBox_DropDown);
+            // 
+            // orderVariablesList
+            // 
+            this.orderVariablesList.AutoSize = true;
+            this.orderVariablesList.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            this.orderVariablesList.Location = new System.Drawing.Point(179, 6);
+            this.orderVariablesList.Name = "orderVariablesList";
+            this.orderVariablesList.Size = new System.Drawing.Size(144, 13);
+            this.orderVariablesList.TabIndex = 3;
+            this.orderVariablesList.Text = "Ordering group controls:";
+            // 
+            // orderByGroup
+            // 
+            this.orderByGroup.AutoSize = true;
+            this.orderByGroup.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.orderByGroup.Location = new System.Drawing.Point(227, 112);
+            this.orderByGroup.Name = "orderByGroup";
+            this.orderByGroup.Size = new System.Drawing.Size(96, 17);
+            this.orderByGroup.TabIndex = 2;
+            this.orderByGroup.Text = "Order by group";
+            this.orderByGroup.UseVisualStyleBackColor = true;
+            this.orderByGroup.CheckedChanged += new System.EventHandler(this.orderByGroup_CheckedChanged);
+            // 
             // listEditorPanelPlaceholder
             // 
             this.listEditorPanelPlaceholder.Location = new System.Drawing.Point(326, 3);
@@ -484,6 +584,14 @@ namespace WordGenerator.Controls
             this.Controls.Add(this.listEditorPanelPlaceholder);
             this.Controls.Add(this.addButton);
             this.Controls.Add(this.runControl1);
+            this.Controls.Add(this.sortVariables);
+            this.Controls.Add(this.sortMethods);
+            this.Controls.Add(this.deleteOrderingGroupButton);
+            this.Controls.Add(this.createOrderingGroupButton);
+            this.Controls.Add(this.orderingGroupTextBox);
+            this.Controls.Add(this.orderingGroupComboBox);
+            this.Controls.Add(this.orderVariablesList);
+            this.Controls.Add(this.orderByGroup);
             this.Name = "VariablesAndListPage";
             this.Size = new System.Drawing.Size(1264, 918);
             this.variablesPanel.ResumeLayout(false);
@@ -542,5 +650,14 @@ namespace WordGenerator.Controls
         private System.Windows.Forms.Label LockMessage;
         private RunControl runControl1;
         private System.Windows.Forms.Button loadCalSequenceFromCurrentSequence;
+        private System.Windows.Forms.CheckBox sortVariables;
+        private System.Windows.Forms.ComboBox sortMethods;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Button deleteOrderingGroupButton;
+        private System.Windows.Forms.Button createOrderingGroupButton;
+        private System.Windows.Forms.TextBox orderingGroupTextBox;
+        private System.Windows.Forms.ComboBox orderingGroupComboBox;
+        private System.Windows.Forms.Label orderVariablesList;
+        private System.Windows.Forms.CheckBox orderByGroup;
     }
 }

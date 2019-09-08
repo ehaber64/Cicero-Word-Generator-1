@@ -40,6 +40,9 @@ namespace WordGenerator.Controls
             this.equationTextBox = new System.Windows.Forms.TextBox();
             this.specializedLabelStart = new System.Windows.Forms.Label();
             this.specialParametersStartPoint = new WordGenerator.Controls.HorizontalParameterEditor();
+            this.numSamples = new System.Windows.Forms.NumericUpDown();
+            this.numSamplesLabel = new System.Windows.Forms.Label();
+            this.toolTipNumSamples = new System.Windows.Forms.ToolTip(this.components);
             this.downButton = new System.Windows.Forms.Button();
             this.upButton = new System.Windows.Forms.Button();
             this.waveformCombosStart = new System.Windows.Forms.ComboBox();
@@ -64,6 +67,7 @@ namespace WordGenerator.Controls
             this.XYParametersStart2 = new WordGenerator.Controls.HorizontalParameterEditor();
             this.XYParametersStart1 = new WordGenerator.Controls.HorizontalParameterEditor();
             this.specialParametersBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numSamples)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.fileLoadGroupBox.SuspendLayout();
             this.SuspendLayout();
@@ -79,7 +83,7 @@ namespace WordGenerator.Controls
             // 
             // nameTextBox
             // 
-            this.nameTextBox.Location = new System.Drawing.Point(81, 0);
+            this.nameTextBox.Location = new System.Drawing.Point(89, 0);
             this.nameTextBox.Name = "nameTextBox";
             this.nameTextBox.Size = new System.Drawing.Size(150, 20);
             this.nameTextBox.TabIndex = 1;
@@ -98,7 +102,7 @@ namespace WordGenerator.Controls
             // 
             this.interpolationTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.interpolationTypeComboBox.FormattingEnabled = true;
-            this.interpolationTypeComboBox.Location = new System.Drawing.Point(81, 26);
+            this.interpolationTypeComboBox.Location = new System.Drawing.Point(89, 26);
             this.interpolationTypeComboBox.Name = "interpolationTypeComboBox";
             this.interpolationTypeComboBox.Size = new System.Drawing.Size(150, 21);
             this.interpolationTypeComboBox.TabIndex = 3;
@@ -120,7 +124,7 @@ namespace WordGenerator.Controls
             this.specialParametersBox.Controls.Add(this.equationTextBox);
             this.specialParametersBox.Controls.Add(this.specializedLabelStart);
             this.specialParametersBox.Controls.Add(this.specialParametersStartPoint);
-            this.specialParametersBox.Location = new System.Drawing.Point(24, 81);
+            this.specialParametersBox.Location = new System.Drawing.Point(24, 121);
             this.specialParametersBox.Name = "specialParametersBox";
             this.specialParametersBox.Size = new System.Drawing.Size(217, 157);
             this.specialParametersBox.TabIndex = 6;
@@ -134,8 +138,8 @@ namespace WordGenerator.Controls
             this.equationHelpText.Size = new System.Drawing.Size(188, 67);
             this.equationHelpText.TabIndex = 4;
             this.equationHelpText.Text = "Enter equation. You may use any of the existing variables or Common Waveforms, an" +
-                "d any of the functions described in the Variables tab. Use \"t\" for time (in seco" +
-                "nds).";
+    "d any of the functions described in the Variables tab. Use \"t\" for time (in seco" +
+    "nds).";
             this.equationHelpText.Visible = false;
             this.equationHelpText.Click += new System.EventHandler(this.equationHelpText_Click);
             // 
@@ -178,10 +182,38 @@ namespace WordGenerator.Controls
             this.specialParametersStartPoint.UnitSelectorVisibility = false;
             this.specialParametersStartPoint.Visible = false;
             // 
+            // numSamples
+            // 
+            this.numSamples.Location = new System.Drawing.Point(87, 83);
+            this.numSamples.Name = "numSamples";
+            this.numSamples.Size = new System.Drawing.Size(49, 20);
+            this.numSamples.Maximum = int.MaxValue;
+            this.numSamples.Minimum = 2;
+            this.numSamples.TabIndex = 5;
+            this.numSamples.ValueChanged += new System.EventHandler(this.numSamples_ValueChanged);
+            // 
+            // numSamplesLabel
+            // 
+            this.numSamplesLabel.AutoSize = true;
+            this.numSamplesLabel.Location = new System.Drawing.Point(14, 86);
+            this.numSamplesLabel.Name = "numSamplesLabel";
+            this.numSamplesLabel.Size = new System.Drawing.Size(72, 13);
+            this.numSamplesLabel.TabIndex = 4;
+            this.numSamplesLabel.Text = "NumSamples:";
+            this.toolTipNumSamples.SetToolTip(this.numSamplesLabel, "Number of samples to use when cutting a spline or common waveform into parts.");
+            // 
+            // toolTipNumSamples
+            // 
+            this.toolTipNumSamples.AutomaticDelay = 100;
+            this.toolTipNumSamples.AutoPopDelay = 15000;
+            this.toolTipNumSamples.InitialDelay = 100;
+            this.toolTipNumSamples.ReshowDelay = 20;
+            this.toolTipNumSamples.ShowAlways = true;
+            // 
             // downButton
             // 
             this.downButton.Enabled = false;
-            this.downButton.Location = new System.Drawing.Point(92, 372);
+            this.downButton.Location = new System.Drawing.Point(92, 395);
             this.downButton.Name = "downButton";
             this.downButton.Size = new System.Drawing.Size(37, 22);
             this.downButton.TabIndex = 9;
@@ -193,7 +225,7 @@ namespace WordGenerator.Controls
             // upButton
             // 
             this.upButton.Enabled = false;
-            this.upButton.Location = new System.Drawing.Point(135, 372);
+            this.upButton.Location = new System.Drawing.Point(135, 395);
             this.upButton.Name = "upButton";
             this.upButton.Size = new System.Drawing.Size(37, 22);
             this.upButton.TabIndex = 10;
@@ -206,7 +238,7 @@ namespace WordGenerator.Controls
             // 
             this.waveformCombosStart.Enabled = false;
             this.waveformCombosStart.FormattingEnabled = true;
-            this.waveformCombosStart.Location = new System.Drawing.Point(69, 289);
+            this.waveformCombosStart.Location = new System.Drawing.Point(69, 316);
             this.waveformCombosStart.Name = "waveformCombosStart";
             this.waveformCombosStart.Size = new System.Drawing.Size(150, 21);
             this.waveformCombosStart.TabIndex = 11;
@@ -215,7 +247,7 @@ namespace WordGenerator.Controls
             // XLabel
             // 
             this.XLabel.AutoSize = true;
-            this.XLabel.Location = new System.Drawing.Point(34, 292);
+            this.XLabel.Location = new System.Drawing.Point(34, 318);
             this.XLabel.Name = "XLabel";
             this.XLabel.Size = new System.Drawing.Size(14, 13);
             this.XLabel.TabIndex = 12;
@@ -225,7 +257,7 @@ namespace WordGenerator.Controls
             // YLabel
             // 
             this.YLabel.AutoSize = true;
-            this.YLabel.Location = new System.Drawing.Point(166, 292);
+            this.YLabel.Location = new System.Drawing.Point(166, 320);
             this.YLabel.Name = "YLabel";
             this.YLabel.Size = new System.Drawing.Size(14, 13);
             this.YLabel.TabIndex = 13;
@@ -234,7 +266,7 @@ namespace WordGenerator.Controls
             // 
             // sortButton
             // 
-            this.sortButton.Location = new System.Drawing.Point(3, 372);
+            this.sortButton.Location = new System.Drawing.Point(3, 395);
             this.sortButton.Name = "sortButton";
             this.sortButton.Size = new System.Drawing.Size(35, 22);
             this.sortButton.TabIndex = 14;
@@ -244,7 +276,7 @@ namespace WordGenerator.Controls
             // 
             // scaleButton
             // 
-            this.scaleButton.Location = new System.Drawing.Point(44, 372);
+            this.scaleButton.Location = new System.Drawing.Point(44, 395);
             this.scaleButton.Name = "scaleButton";
             this.scaleButton.Size = new System.Drawing.Size(42, 22);
             this.scaleButton.TabIndex = 15;
@@ -278,26 +310,26 @@ namespace WordGenerator.Controls
             this.copyToClipboardToolStripMenuItem,
             this.pasteFromClipboardToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(226, 70);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(234, 70);
             // 
             // copyToCommonWaveformsToolStripMenuItem
             // 
             this.copyToCommonWaveformsToolStripMenuItem.Name = "copyToCommonWaveformsToolStripMenuItem";
-            this.copyToCommonWaveformsToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.copyToCommonWaveformsToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.copyToCommonWaveformsToolStripMenuItem.Text = "Copy to Common Waveforms";
             this.copyToCommonWaveformsToolStripMenuItem.Click += new System.EventHandler(this.copyToCommonWaveformsToolStripMenuItem_Click);
             // 
             // copyToClipboardToolStripMenuItem
             // 
             this.copyToClipboardToolStripMenuItem.Name = "copyToClipboardToolStripMenuItem";
-            this.copyToClipboardToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.copyToClipboardToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.copyToClipboardToolStripMenuItem.Text = "Copy to Clipboard";
             this.copyToClipboardToolStripMenuItem.Click += new System.EventHandler(this.copyToClipboardToolStripMenuItem_Click);
             // 
             // pasteFromClipboardToolStripMenuItem
             // 
             this.pasteFromClipboardToolStripMenuItem.Name = "pasteFromClipboardToolStripMenuItem";
-            this.pasteFromClipboardToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.pasteFromClipboardToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.pasteFromClipboardToolStripMenuItem.Text = "Paste from Clipboard";
             this.pasteFromClipboardToolStripMenuItem.Click += new System.EventHandler(this.pasteFromClipboardToolStripMenuItem_Click);
             // 
@@ -316,7 +348,7 @@ namespace WordGenerator.Controls
             // filePathTextBox
             // 
             this.filePathTextBox.Enabled = false;
-            this.filePathTextBox.Location = new System.Drawing.Point(67, 38);
+            this.filePathTextBox.Location = new System.Drawing.Point(67, 76);
             this.filePathTextBox.Name = "filePathTextBox";
             this.filePathTextBox.Size = new System.Drawing.Size(141, 20);
             this.filePathTextBox.TabIndex = 17;
@@ -337,7 +369,7 @@ namespace WordGenerator.Controls
             // fileLoadButton
             // 
             this.fileLoadButton.Enabled = false;
-            this.fileLoadButton.Location = new System.Drawing.Point(107, 12);
+            this.fileLoadButton.Location = new System.Drawing.Point(107, 11);
             this.fileLoadButton.Name = "fileLoadButton";
             this.fileLoadButton.Size = new System.Drawing.Size(96, 20);
             this.fileLoadButton.TabIndex = 19;
@@ -352,7 +384,7 @@ namespace WordGenerator.Controls
             this.fileLoadGroupBox.Controls.Add(this.fileLoadButton);
             this.fileLoadGroupBox.Controls.Add(this.fileBrowseButton);
             this.fileLoadGroupBox.Controls.Add(this.filePathTextBox);
-            this.fileLoadGroupBox.Location = new System.Drawing.Point(24, 244);
+            this.fileLoadGroupBox.Location = new System.Drawing.Point(24, 274);
             this.fileLoadGroupBox.Name = "fileLoadGroupBox";
             this.fileLoadGroupBox.Size = new System.Drawing.Size(217, 39);
             this.fileLoadGroupBox.TabIndex = 20;
@@ -362,7 +394,7 @@ namespace WordGenerator.Controls
             // 
             this.XLabel1.AutoSize = true;
             this.XLabel1.Enabled = false;
-            this.XLabel1.Location = new System.Drawing.Point(34, 292);
+            this.XLabel1.Location = new System.Drawing.Point(34, 319);
             this.XLabel1.Name = "XLabel1";
             this.XLabel1.Size = new System.Drawing.Size(14, 13);
             this.XLabel1.TabIndex = 21;
@@ -373,7 +405,7 @@ namespace WordGenerator.Controls
             // 
             this.YLabel1.AutoSize = true;
             this.YLabel1.Enabled = false;
-            this.YLabel1.Location = new System.Drawing.Point(166, 292);
+            this.YLabel1.Location = new System.Drawing.Point(166, 320);
             this.YLabel1.Name = "YLabel1";
             this.YLabel1.Size = new System.Drawing.Size(14, 13);
             this.YLabel1.TabIndex = 22;
@@ -382,7 +414,7 @@ namespace WordGenerator.Controls
             // 
             // durationParameterEditor
             // 
-            this.durationParameterEditor.Location = new System.Drawing.Point(81, 53);
+            this.durationParameterEditor.Location = new System.Drawing.Point(88, 53);
             this.durationParameterEditor.Name = "durationParameterEditor";
             this.durationParameterEditor.Size = new System.Drawing.Size(150, 22);
             this.durationParameterEditor.TabIndex = 5;
@@ -392,7 +424,7 @@ namespace WordGenerator.Controls
             // XYParametersStart2
             // 
             this.XYParametersStart2.Enabled = false;
-            this.XYParametersStart2.Location = new System.Drawing.Point(135, 316);
+            this.XYParametersStart2.Location = new System.Drawing.Point(135, 341);
             this.XYParametersStart2.Name = "XYParametersStart2";
             this.XYParametersStart2.Size = new System.Drawing.Size(131, 22);
             this.XYParametersStart2.TabIndex = 8;
@@ -402,7 +434,7 @@ namespace WordGenerator.Controls
             // XYParametersStart1
             // 
             this.XYParametersStart1.Enabled = false;
-            this.XYParametersStart1.Location = new System.Drawing.Point(3, 316);
+            this.XYParametersStart1.Location = new System.Drawing.Point(3, 342);
             this.XYParametersStart1.Name = "XYParametersStart1";
             this.XYParametersStart1.Size = new System.Drawing.Size(133, 22);
             this.XYParametersStart1.TabIndex = 7;
@@ -435,10 +467,13 @@ namespace WordGenerator.Controls
             this.Controls.Add(this.waveformCombosStart);
             this.Controls.Add(this.XLabel1);
             this.Controls.Add(this.XLabel);
+            this.Controls.Add(this.numSamplesLabel);
+            this.Controls.Add(this.numSamples);
             this.Name = "WaveformEditor";
             this.Size = new System.Drawing.Size(269, 790);
             this.specialParametersBox.ResumeLayout(false);
             this.specialParametersBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numSamples)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
             this.fileLoadGroupBox.ResumeLayout(false);
             this.fileLoadGroupBox.PerformLayout();
@@ -483,5 +518,9 @@ namespace WordGenerator.Controls
         private System.Windows.Forms.Label equationHelpText;
         private System.Windows.Forms.ToolStripMenuItem copyToClipboardToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pasteFromClipboardToolStripMenuItem;
+
+        private System.Windows.Forms.NumericUpDown numSamples;
+        private System.Windows.Forms.Label numSamplesLabel;
+        private System.Windows.Forms.ToolTip toolTipNumSamples;
     }
 }

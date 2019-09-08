@@ -58,6 +58,11 @@ namespace WordGenerator.Controls
 
         }
 
+        public Variable getVariable()
+        {
+            return variable;
+        }
+
         public void setVariable(Variable var)
         {
             if (this.variable == var)
@@ -183,11 +188,6 @@ namespace WordGenerator.Controls
             }
         }
 
-        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
-        {
-
-        }
-
         private void deleteVariableToolStripMenuItem_Click(object sender, EventArgs e)
         {
             attemptDeleteVariable();
@@ -203,6 +203,7 @@ namespace WordGenerator.Controls
             }
             else
             {
+                Storage.sequenceData.RemoveVariableID(this.variable.ID);
                 Storage.sequenceData.Variables.Remove(this.variable);
                 if (variableDeleted != null)
                     variableDeleted(this, null);
@@ -227,6 +228,7 @@ namespace WordGenerator.Controls
         private List<HorizontalParameterEditor> combinedValues;
         private List<ComboBox> combineOperators;
         private Dictionary<ComboBox, int> combineOperatorsIndexMapping;
+
         public void updateLayout()
         {
             if (variable == null)
@@ -275,6 +277,8 @@ namespace WordGenerator.Controls
             else
             {
                 permanentValueLabel.Visible = false;
+                populateSelectGroup();
+                selectGroup.SelectedItem = variable.OrderingGroup;
 
                 if (!variable.DerivedVariable)
                 {
@@ -370,33 +374,57 @@ namespace WordGenerator.Controls
             dial.ShowDialog();
         }
 
-    /*    private void downButton_Click(object sender, EventArgs e)
+        private void populateSelectGroup()
         {
-            if (variable != null)
-            {
-                if (variable.DerivedVariable)
-                {
-                    variable.Combiners.Add(Variable.plus);
-                    variable.CombinedValues.Add(new DimensionedParameter(Units.Dimension.unity));
-                    updateLayout();
-                }
-            }
+            selectGroup.Items.Clear();
+            foreach (String group in Storage.sequenceData.OrderingGroups[SequenceData.OrderingGroupTypes.Variables])
+                selectGroup.Items.Add(group);
         }
 
-        private void upButton_Click(object sender, EventArgs e)
+        private void selectGroup_DropDown(object sender, EventArgs e)
         {
-            if (variable != null)
+            populateSelectGroup();
+        }
+
+        private void selectGroup_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            variable.OrderingGroup = selectGroup.SelectedItem as String;
+        }
+
+        private void removeGroup_Click(object sender, EventArgs e)
+        {
+            variable.OrderingGroup = null;
+            selectGroup.SelectedItem = variable.OrderingGroup;
+        }
+
+
+        /*    private void downButton_Click(object sender, EventArgs e)
             {
-                if (variable.DerivedVariable)
+                if (variable != null)
                 {
-                    if (variable.CombinedValues.Count > 1)
+                    if (variable.DerivedVariable)
                     {
-                        variable.CombinedValues.RemoveAt(variable.CombinedValues.Count - 1);
-                        variable.Combiners.RemoveAt(variable.Combiners.Count - 1);
+                        variable.Combiners.Add(Variable.plus);
+                        variable.CombinedValues.Add(new DimensionedParameter(Units.Dimension.unity));
                         updateLayout();
                     }
                 }
             }
-        }*/
+
+            private void upButton_Click(object sender, EventArgs e)
+            {
+                if (variable != null)
+                {
+                    if (variable.DerivedVariable)
+                    {
+                        if (variable.CombinedValues.Count > 1)
+                        {
+                            variable.CombinedValues.RemoveAt(variable.CombinedValues.Count - 1);
+                            variable.Combiners.RemoveAt(variable.Combiners.Count - 1);
+                            updateLayout();
+                        }
+                    }
+                }
+            }*/
     }
 }

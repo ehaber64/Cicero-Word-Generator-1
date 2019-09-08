@@ -26,10 +26,11 @@ namespace WordGenerator
         private static IAsyncResult connectAsyncResult;
 
 
-        private void button1_Click(object sender, EventArgs e)
+        public void button1_Click(object sender, EventArgs e)
         {
             if (Storage.settingsData.serverManager.clearConnections())
             {
+                Storage.settingsData.serverManager.StopPing = false;
                 // The following call is done async to prevent blocking of the UI thread while networking stuff happens.
                 connectDelegate = new boolMessageLogDelegate(Storage.settingsData.serverManager.connectAllEnabledServer);
                 AsyncCallback connectDoneCallback = new AsyncCallback(callBack);
@@ -76,6 +77,11 @@ namespace WordGenerator
                     textBox1.AppendText(sender.ToString() + ": " + e.ToString() + "\r\n");
                 }
             }
+        }
+
+        private void stopPing_Click(object sender, EventArgs e)
+        {
+            Storage.settingsData.serverManager.StopPing = true;
         }
     }
 }

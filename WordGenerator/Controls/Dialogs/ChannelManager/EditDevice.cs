@@ -38,6 +38,9 @@ namespace WordGenerator.ChannelManager
 
             togglingCheck.Checked = sd.lc.TogglingChannel;
 
+            if (Storage.settingsData.ChannelsToTurnOff[sd.channelType].ContainsKey(sd.logicalID))
+                turnOffBox.Checked = true;
+
             if (sd.channelType == HardwareChannel.HardwareConstants.ChannelTypes.analog)
             {
                 checkBox1.Visible = true;
@@ -66,7 +69,15 @@ namespace WordGenerator.ChannelManager
             sd.lc.Name = this.deviceNameText.Text;
             sd.lc.Description = this.deviceDescText.Text;
             sd.lc.AnalogChannelOutputNowUsesDwellWord = checkBox1.Checked;
-            
+            sd.lc.OrderingGroup = orderingGroups.SelectedItem as String;
+            if (turnOffBox.Checked)
+            {
+                if (!Storage.settingsData.ChannelsToTurnOff[sd.channelType].ContainsKey(sd.logicalID))
+                    Storage.settingsData.ChannelsToTurnOff[sd.channelType].Add(sd.logicalID, sd.lc);
+            }
+            else
+            { Storage.settingsData.ChannelsToTurnOff[sd.channelType].Remove(sd.logicalID); }
+
             if (this.availableHardwareChanCombo.SelectedItem is HardwareChannel)
                 sd.lc.HardwareChannel = (HardwareChannel) this.availableHardwareChanCombo.SelectedItem;
             else
@@ -104,5 +115,26 @@ namespace WordGenerator.ChannelManager
             sd.lc.TogglingChannel = togglingCheck.Checked;
         }
 
+        private void turnOff_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void populateOrderingGroupComboBox()
+        {
+            if (Storage.sequenceData != null)
+            {
+                orderingGroups.Items.Clear();
+                List<String> sortedGroups = new List<String>(Storage.sequenceData.OrderingGroups[SequenceData.OrderingGroupTypes.LogicalChannels]);
+                sortedGroups.Sort();
+                foreach (String group in sortedGroups)
+                    orderingGroups.Items.Add(group);
+            }
+        }
+
+        private void orderingGroupsComboBox_DropDown(object sender, EventArgs e)
+        {
+            populateOrderingGroupComboBox();
+        }
     }
 }

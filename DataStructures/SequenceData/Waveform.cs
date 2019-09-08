@@ -29,6 +29,7 @@ namespace DataStructures
             this.dataFileName = copyMe.dataFileName;
             this.dataFromFile = copyMe.dataFromFile;
             this.equationString = copyMe.equationString;
+            NumSamples = copyMe.NumSamples;
 
             if (copyMe.extraParameters != null)
                 this.extraParameters = new List<DimensionedParameter>(copyMe.extraParameters);
@@ -60,7 +61,61 @@ namespace DataStructures
 
         }
 
-		#region InterpolationType
+        public void DeepCopyWaveform(Waveform copyMe)
+        {
+            if (copyMe.combiners != null)
+            {
+                List<InterpolationType.CombinationOperators> list = new List<InterpolationType.CombinationOperators>();
+                list.Capacity = copyMe.combiners.Count;
+                foreach (InterpolationType.CombinationOperators combiner in copyMe.combiners)
+                { list.Add(combiner); }
+                this.combiners = list;
+            }
+            else
+                this.combiners = null;
+
+            this.dataFileName = copyMe.dataFileName;
+            this.dataFromFile = copyMe.dataFromFile;
+            this.equationString = copyMe.equationString;
+            NumSamples = copyMe.NumSamples;
+
+            if (copyMe.extraParameters != null)
+            {
+                List<DimensionedParameter> list = new List<DimensionedParameter>();
+                list.Capacity = copyMe.ExtraParameters.Count;
+                foreach (DimensionedParameter param in copyMe.ExtraParameters)
+                { list.Add(new DimensionedParameter(param.ParameterUnits, param.getParameterBaseValue())); }
+                this.extraParameters = list;
+            }
+            else
+                this.extraParameters = null;
+
+            this.myInterpolationType = copyMe.myInterpolationType;
+
+            if (copyMe.referencedWaveforms != null)
+                this.referencedWaveforms = new List<Waveform>(copyMe.referencedWaveforms);
+            else
+                this.referencedWaveforms = null;
+
+            this.waveformDuration = new DimensionedParameter(copyMe.waveformDuration);
+
+            this.waveformName = copyMe.waveformName;
+
+            if (copyMe.xValues != null)
+                this.xValues = new List<DimensionedParameter>(copyMe.xValues);
+            else
+                this.xValues = null;
+
+            this.YUnits = copyMe.YUnits;
+
+            if (copyMe.yValues != null)
+                this.yValues = new List<DimensionedParameter>(copyMe.yValues);
+            else
+                this.yValues = null;
+
+        }
+
+        #region InterpolationType
 
         /// <summary>
         /// Edit this class to create new interpolation types. Stores all the names of interpolation types,
@@ -250,7 +305,7 @@ namespace DataStructures
 
 			/// <summary>
 			/// Dimension type of the extra parameters for corresponding interpolation types. Note, these are actually
-            /// over-riden by the bool array below, which specifies which of the extra dimensions have their dimension derived
+            /// overriden by the bool array below, which specifies which of the extra dimensions have their dimension derived
             /// from the y-axis dimension.
 			/// </summary>
             private static readonly Units.Dimension[][] ExtraParameterDimensions = {
@@ -1227,6 +1282,7 @@ namespace DataStructures
                 this.xValues = new List<DimensionedParameter>(copyMe.xValues);
             if (copyMe.yValues != null)
                 this.yValues = new List<DimensionedParameter>(copyMe.yValues);
+            NumSamples = copyMe.NumSamples;
 
             this.YUnits = copyMe.YUnits;
 
@@ -1441,6 +1497,29 @@ namespace DataStructures
                 dp.setBaseValue(dp.getBaseValue() * waveformDuration.getBaseValue() / maxX); 
             }
             return true;
+        }
+
+        private int numSamples;
+
+        [Description("Number of samples to use when cutting a spline or common waveform into parts."), Category("Global")]
+        public int NumSamples
+        {
+            get
+            {
+                if (numSamples < 2)
+                { numSamples = 2; }
+                return numSamples;
+            }
+            set { numSamples = value; }
+        }
+
+        private int minNumSamples = 2;
+
+        [Description("Minimum number that numSamples is allowed to be."), Category("Global")]
+        public int MinNumSamples
+        {
+            get
+            { return minNumSamples; }
         }
 
     }

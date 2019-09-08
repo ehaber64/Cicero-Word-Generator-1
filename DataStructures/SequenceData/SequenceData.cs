@@ -322,7 +322,7 @@ namespace DataStructures
                 {
                     if (variables.Count <= i)
                     {
-                        Variable newVar = new Variable();
+                        Variable newVar = new Variable(GenerateNewVariableID());
                         newVar.IsSpecialVariable = true;
                         newVar.MySpecialVariableType = (Variable.SpecialVariableType) i;
                         newVar.VariableName = newVar.MySpecialVariableType.ToString();
@@ -331,7 +331,7 @@ namespace DataStructures
 
                     if (!variables[i].IsSpecialVariable || (variables[i].MySpecialVariableType != (Variable.SpecialVariableType)i))
                     {
-                        Variable newVar = new Variable();
+                        Variable newVar = new Variable(GenerateNewVariableID());
                         newVar.IsSpecialVariable = true;
                         newVar.MySpecialVariableType = (Variable.SpecialVariableType)i;
                         newVar.VariableName = newVar.MySpecialVariableType.ToString();
@@ -462,6 +462,152 @@ namespace DataStructures
             set { digitalPulses = value; }
         }
 
+        private Dictionary<SequenceMode, HashSet<Pulse>> newPulses;
+
+        /// <summary>
+        /// A dictionary where each key is a mode and each value a set containing the pulses in that mode.
+        /// </summary>
+        public Dictionary<SequenceMode, HashSet<Pulse>> NewPulses
+        {
+            get {
+                if (newPulses == null)
+                { newPulses = new Dictionary<SequenceMode, HashSet<Pulse>>(); }
+                return newPulses;
+            }
+            set { newPulses = value; }
+        }
+
+        private List<int> deletedPulseIDs;
+
+        /// <summary>
+        /// Pulse IDs that were assigned to a pulse which was later deleted. :(
+        /// </summary>
+        public List<int> DeletedPulseIDs
+        {
+            get {
+                if (deletedPulseIDs == null)
+                { deletedPulseIDs = new List<int>(DigitalPulses.Count); }
+                return deletedPulseIDs;
+            }
+            set { deletedPulseIDs = value; }
+        }
+
+        private HashSet<int> usedPulseIDs;
+
+        /// <summary>
+        /// IDs assigned to pulses that have not been deleted and are currently in use. :)
+        /// </summary>
+        public HashSet<int> UsedPulseIDs
+        {
+            get {
+                if (usedPulseIDs == null)
+                { usedPulseIDs = new HashSet<int>(); }
+                return usedPulseIDs;
+            }
+            set { usedPulseIDs = value; }
+        }
+
+        private HashSet<int> usedModeIDs;
+
+        /// <summary>
+        /// IDs assigned to sequence modes that have not been deleted and are currently in use.
+        /// </summary>
+        public HashSet<int> UsedModeIDs
+        {
+            get
+            {
+                if (usedModeIDs == null)
+                { usedModeIDs = new HashSet<int>(); }
+                return usedModeIDs;
+            }
+            set { usedModeIDs = value; }
+        }
+
+        private HashSet<int> usedAnalogGroupIDs;
+
+        /// <summary>
+        /// IDs assigned to analog groups that have not been deleted and are currently in use.
+        /// </summary>
+        public HashSet<int> UsedAnalogGroupIDs
+        {
+            get
+            {
+                if (usedAnalogGroupIDs == null)
+                { usedAnalogGroupIDs = new HashSet<int>(); }
+                return usedAnalogGroupIDs;
+            }
+            set { usedAnalogGroupIDs = value; }
+        }
+
+        private HashSet<int> usedVariableIDs;
+
+        /// <summary>
+        /// IDs assigned to variables that have not been deleted and are currently in use.
+        /// </summary>
+        public HashSet<int> UsedVariableIDs
+        {
+            get
+            {
+                if (usedVariableIDs == null)
+                { usedVariableIDs = new HashSet<int>(); }
+                return usedVariableIDs;
+            }
+            set { usedVariableIDs = value; }
+        }
+
+        private HashSet<int> usedModeListIDs;
+
+        /// <summary>
+        /// IDs assigned to ModeLists that have not been deleted and are currently in use.
+        /// </summary>
+        public HashSet<int> UsedModeListIDs
+        {
+            get
+            {
+                if (usedModeListIDs == null)
+                { usedModeListIDs = new HashSet<int>(); }
+                return usedModeListIDs;
+            }
+            set { usedModeListIDs = value; }
+        }
+
+        private Dictionary<SequenceMode, HashSet<SequenceMode>> modeReferences;
+
+        /// <summary>
+        /// A dictionary where each key is a mode and the value is a set of the modes that reference the key.
+        /// </summary>
+        public Dictionary<SequenceMode, HashSet<SequenceMode>> ModeReferences
+        {
+            get
+            {
+                if (modeReferences == null)
+                { modeReferences = new Dictionary<SequenceMode, HashSet<SequenceMode>>(); }
+                return modeReferences;
+            }
+            set { modeReferences = value; }
+        }
+
+        /// <summary>
+        /// The types of lists in Cicero that can have groups made for them.
+        /// </summary>
+        public enum OrderingGroupTypes { Pulses, Variables, LogicalChannels, ModeLists};
+
+        private Dictionary<OrderingGroupTypes, HashSet<String>> orderingGroups;
+
+        /// <summary>
+        /// A dictionary where each value is the set of ordering groups whose type matches the key.
+        /// </summary>
+        public Dictionary<OrderingGroupTypes, HashSet<String>> OrderingGroups
+        {
+            get
+            {
+                if (orderingGroups == null)
+                    orderingGroups = new Dictionary<OrderingGroupTypes, HashSet<String>>();
+                return orderingGroups;
+            }
+            set { orderingGroups = value; }
+        }
+
         [Category("Sequence"), Description("A list of the timesteps used in the sequence.")]
         public List<TimeStep> TimeSteps
         {
@@ -513,6 +659,27 @@ namespace DataStructures
             set { waitForReady = value; }
         }
 
+        private double pulseSequenceEndTime;
+        [Description("When the last pulse in a sequence finishes."),
+        Category("Global")]
+        public double PulseSequenceEndTime
+        {
+            get { return pulseSequenceEndTime; }
+            set { pulseSequenceEndTime = value; }
+        }
+
+        private List<ModeList> modeLists;
+
+        public List<ModeList> ModeLists
+        {
+            get {
+                if (modeLists == null)
+                    modeLists = new List<ModeList>();
+                return modeLists;
+            }
+            set { modeLists = value; }
+        }
+
 
         #endregion
 
@@ -523,13 +690,14 @@ namespace DataStructures
             steps = new List<TimeStep>();
             commonWaveforms = new List<Waveform>();
             analogGroups = new List<AnalogGroup>();
-            analogGroups.Add(new AnalogGroup("Unnamed"));
+            analogGroups.Add(new AnalogGroup(-1, "Unnamed"));
             gpibGroups = new List<GPIBGroup>();
             gpibGroups.Add(new GPIBGroup("Unnamed"));
             variables = new List<Variable>();
             lists = new ListData();
             versionNumberAtFirstCreation = DataStructuresVersionNumber.CurrentVersion;
             versionNumberAtLastSerialization = DataStructuresVersionNumber.CurrentVersion;
+            newPulses = new Dictionary<SequenceMode, HashSet<Pulse>>();
         }
 
         /// <summary>
@@ -655,7 +823,7 @@ namespace DataStructures
         }
 
         /// <summary>
-        /// Returns the first timestep after elasped time from sequence start (in seconds) given by time.
+        /// Returns the first timestep after elapsed time from sequence start (in seconds) given by time.
         /// Note
         /// </summary>
         /// <param name="time"></param>
@@ -819,6 +987,256 @@ namespace DataStructures
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Generates a unique (i.e. unused) integer that can be used as a pulse ID, and adds it to UsedPulseIDs.
+        /// </summary>
+        public int GenerateNewPulseID()
+        {
+            int id = UsedPulseIDs.Count + 1;
+
+            //Check if this is unique, if not then try to correct it
+            //Note: unless another method incorrectly generated a pulse ID 
+            //this while loop should never be used.
+            if (UsedPulseIDs.Contains(id))
+            {
+                id = 0;
+                while (UsedPulseIDs.Contains(id) && id < int.MaxValue)
+                    id++;
+            }
+
+            UsedPulseIDs.Add(id);
+
+            return id;
+        }
+
+        /// <summary>
+        /// Removes the input ID from the set Storage.sequenceData.UsedPulseIDs and lowers the ID of every pulse with an ID greater than the input one.
+        /// </summary>
+        /// <param name="ID">Pulse ID that should be removed.</param>
+        /// <returns>Returns true if the ID was succesfully removed from the set. false if not.</returns>
+        public bool RemovePulseID(int ID)
+        {
+            if (UsedPulseIDs.Contains(ID))
+            {
+                UsedPulseIDs = new HashSet<int>();
+                foreach (SequenceMode mode in NewPulses.Keys)
+                {
+                    if (NewPulses.ContainsKey(mode))
+                    {
+                        foreach (Pulse pulse in NewPulses[mode])
+                        {
+                            if (pulse.ID != ID)
+                            {
+                                if (pulse.ID > ID)
+                                    pulse.ID -= 1;
+                                UsedPulseIDs.Add(pulse.ID);
+                            }
+                        }
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Generates a unique (i.e. unused) integer that can be used as a mode ID, and adds it to UsedModeIDs.
+        /// </summary>
+        public int GenerateNewModeID()
+        {
+            //Create a (hopefully) new ID
+            int id = UsedModeIDs.Count + 1;
+
+            //Check if this is unique, if not then try to correct it
+            //Note: unless another method incorrectly generated a mode ID 
+            //this while loop should never be used.
+            if (UsedModeIDs.Contains(id))
+            {
+                id = 0;
+                while (UsedModeIDs.Contains(id) && id < int.MaxValue)
+                    id++;
+            }
+
+            UsedModeIDs.Add(id);
+
+            return id;
+        }
+
+        /// <summary>
+        /// Removes the input ID from the set Storage.sequenceData.UsedModeIDs and lowers the ID of every mdoe with an ID greater than the input one.
+        /// </summary>
+        /// <param name="ID">Mode ID that should be removed.</param>
+        /// <returns>Returns true if the ID was succesfully removed from the set. false if not.</returns>
+        public bool RemoveModeID(int ID)
+        {
+            if (UsedModeIDs.Contains(ID))
+            {
+                UsedModeIDs = new HashSet<int>();
+                foreach (SequenceMode mode in SequenceModes)
+                {
+                    if (mode.ID != ID)
+                    {
+                        if (mode.ID > ID)
+                            mode.ID -= 1;
+                        UsedModeIDs.Add(mode.ID);
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Generates a unique (i.e. unused) integer that can be used as an analog group ID, and adds it to UsedAnalogGroupIDs.
+        /// </summary>
+        public int GenerateNewAnalogGroupID()
+        {
+            //Create a (hopefully) new ID
+            int id = UsedAnalogGroupIDs.Count + 1;
+
+            //Check if this is unique, if not then try to correct it
+            //Note: unless another method incorrectly generated an analog group ID 
+            //this while loop should never be used.
+            if (UsedAnalogGroupIDs.Contains(id))
+            {
+                id = 0;
+                while (UsedAnalogGroupIDs.Contains(id) && id < int.MaxValue)
+                    id++;
+            }
+
+            UsedAnalogGroupIDs.Add(id);
+
+            return id;
+        }
+
+        /// <summary>
+        /// Removes the input ID from the set Storage.sequenceData.UsedAnalogGroupIDs and lowers the ID of every group with an ID greater than the input one.
+        /// </summary>
+        /// <param name="ID">Analog group ID that should be removed.</param>
+        /// <returns>Returns true if the ID was succesfully removed from the set. false if not.</returns>
+        public bool RemoveAnalogGroupID(int ID)
+        {
+            if (UsedAnalogGroupIDs.Contains(ID))
+            {
+                UsedAnalogGroupIDs = new HashSet<int>();
+                foreach (AnalogGroup group in AnalogGroups)
+                {
+                    if (group.ID != ID)
+                    {
+                        if (group.ID > ID)
+                            group.ID -= 1;
+                        UsedAnalogGroupIDs.Add(group.ID);
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Generates a unique (i.e. unused) integer that can be used as a variable ID, and adds it to UsedVariableIDs.
+        /// </summary>
+        public int GenerateNewVariableID()
+        {
+            //Create a (hopefully) new ID
+            int id = UsedVariableIDs.Count + 1;
+
+            //Check if this is unique, if not then try to correct it
+            //Note: unless another method incorrectly generated a variable ID 
+            //this while loop should never be used.
+            if (UsedVariableIDs.Contains(id))
+            {
+                id = 0;
+                while (UsedVariableIDs.Contains(id) && id < int.MaxValue)
+                    id++;
+            }
+
+            UsedVariableIDs.Add(id);
+
+            return id;
+        }
+
+        /// <summary>
+        /// Removes the input ID from the set Storage.sequenceData.UsedVariableIDs and lowers the ID of every group with an ID greater than the input one.
+        /// </summary>
+        /// <param name="ID">Variable ID that should be removed.</param>
+        /// <returns>Returns true if the ID was succesfully removed from the set. false if not.</returns>
+        public bool RemoveVariableID(int ID)
+        {
+            if (UsedVariableIDs.Contains(ID))
+            {
+                UsedVariableIDs = new HashSet<int>();
+                foreach (Variable var in Variables)
+                {
+                    if (var.ID != ID)
+                    {
+                        if (var.ID > ID)
+                            var.ID -= 1;
+                        UsedVariableIDs.Add(var.ID);
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Generates a unique (i.e. unused) integer that can be used as a mode list ID, and adds it to UsedModeListIDs.
+        /// </summary>
+        public int GenerateNewModeListID()
+        {
+            //Create a (hopefully) new ID
+            int id = UsedModeListIDs.Count + 1;
+
+            //Check if this is unique, if not then try to correct it
+            //Note: unless another method incorrectly generated a ModeList ID 
+            //this while loop should never be used.
+            if (UsedModeListIDs.Contains(id))
+            {
+                id = 0;
+                while (UsedModeListIDs.Contains(id) && id < int.MaxValue)
+                    id++;
+            }
+
+            UsedModeListIDs.Add(id);
+
+            return id;
+        }
+
+        /// <summary>
+        /// Removes the input ID from the set Storage.sequenceData.UsedModeListIDs and lowers the ID of every group with an ID greater than the input one.
+        /// </summary>
+        /// <param name="ID">ModeList ID that should be removed.</param>
+        /// <returns>Returns true if the ID was succesfully removed from the set. false if not.</returns>
+        public bool RemoveModeListID(int ID)
+        {
+            if (UsedModeListIDs.Contains(ID))
+            {
+                UsedModeListIDs = new HashSet<int>();
+                foreach (ModeList list in ModeLists)
+                {
+                    if (list.ID == ID)
+                    {
+                        if (list.ID > ID)
+                            list.ID -= 1;
+                        UsedModeListIDs.Add(list.ID);
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         #endregion
@@ -1519,7 +1937,7 @@ namespace DataStructures
                                 VariableTimebaseSegmentCollection timestepSegments = new VariableTimebaseSegmentCollection();
                                 Dictionary<AnalogGroup, double> runningGroups = getRunningGroupRemainingTime(stepID);
 
-                                // first cull groups that have less remaining time than 2 master timbase cycles.
+                                // first cull groups that have less remaining time than 2 master timebase cycles.
                                 {
                                     List<AnalogGroup> groups = new List<AnalogGroup>(runningGroups.Keys);
                                     foreach (AnalogGroup ag in groups)
@@ -1533,7 +1951,6 @@ namespace DataStructures
 
                                 if (runningGroups.Count == 0)
                                 {
-
                                     timestepSegments.Add(new VariableTimebaseSegment(1, (int)(currentStep.StepDuration.getBaseValue() / masterTimebaseSampleDuration)));
                                 }
                                 else
@@ -1845,7 +2262,7 @@ namespace DataStructures
             ans[0] = dwellWord().getEndAnalogValue(analogChannelID, Variables, CommonWaveforms);
 
 
-            // forward fast to first timestep which actually uses this channel
+            // fast forward to first timestep which actually uses this channel
             int currentStep = 0;
             int currentSample = 0;
 
@@ -2627,6 +3044,9 @@ namespace DataStructures
             if (DigitalPulses.Contains(replaceMe))
             {
                 DigitalPulses.Remove(replaceMe);
+                NewPulses[replaceMe.PulseMode].Remove(replaceMe);
+                DeletedPulseIDs.Add(replaceMe.ID);
+                UsedPulseIDs.Remove(replaceMe.ID);
             }
         }
 
@@ -2647,7 +3067,10 @@ namespace DataStructures
             }
 
             if (AnalogGroups.Contains(replaceMe))
+            {
+                RemoveAnalogGroupID(replaceMe.ID);
                 AnalogGroups.Remove(replaceMe);
+            }
         }
 
         /// <summary>

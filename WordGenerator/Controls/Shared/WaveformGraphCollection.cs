@@ -13,6 +13,12 @@ namespace WordGenerator.Controls
     {
         private List<WaveformGraph> waveformGraphs;
 
+        public List<WaveformGraph> WaveformGraphs
+        {
+            get { return waveformGraphs; }
+            set { waveformGraphs = value; }
+        }
+
         private WaveformEditor waveformEditor;
 
         /// <summary>
@@ -145,7 +151,7 @@ namespace WordGenerator.Controls
 
         }
 
-        void WaveformGraphCollection_gotClicked(object sender, EventArgs e)
+        public void WaveformGraphCollection_gotClicked(object sender, EventArgs e)
         {
             if (WordGenerator.MainClientForm.instance != null)
                 WordGenerator.MainClientForm.instance.cursorWait();

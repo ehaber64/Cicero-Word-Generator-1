@@ -43,6 +43,9 @@ namespace WordGenerator.ChannelManager
             this.refreshHardwareButton = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.togglingCheck = new System.Windows.Forms.CheckBox();
+            this.turnOffBox = new System.Windows.Forms.CheckBox();
+            this.orderingGroupLabel = new System.Windows.Forms.Label();
+            this.orderingGroups = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // logicalIDText
@@ -64,7 +67,7 @@ namespace WordGenerator.ChannelManager
             // 
             // cancelButton
             // 
-            this.cancelButton.Location = new System.Drawing.Point(246, 169);
+            this.cancelButton.Location = new System.Drawing.Point(246, 208);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 21;
@@ -74,7 +77,7 @@ namespace WordGenerator.ChannelManager
             // 
             // okButton
             // 
-            this.okButton.Location = new System.Drawing.Point(165, 169);
+            this.okButton.Location = new System.Drawing.Point(165, 208);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
             this.okButton.TabIndex = 20;
@@ -152,7 +155,7 @@ namespace WordGenerator.ChannelManager
             // 
             // refreshHardwareButton
             // 
-            this.refreshHardwareButton.Location = new System.Drawing.Point(15, 169);
+            this.refreshHardwareButton.Location = new System.Drawing.Point(15, 208);
             this.refreshHardwareButton.Name = "refreshHardwareButton";
             this.refreshHardwareButton.Size = new System.Drawing.Size(105, 23);
             this.refreshHardwareButton.TabIndex = 27;
@@ -164,7 +167,7 @@ namespace WordGenerator.ChannelManager
             // 
             this.checkBox1.AutoSize = true;
             this.checkBox1.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBox1.Location = new System.Drawing.Point(16, 129);
+            this.checkBox1.Location = new System.Drawing.Point(12, 129);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(241, 17);
             this.checkBox1.TabIndex = 28;
@@ -176,7 +179,7 @@ namespace WordGenerator.ChannelManager
             // 
             this.togglingCheck.AutoSize = true;
             this.togglingCheck.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.togglingCheck.Location = new System.Drawing.Point(15, 146);
+            this.togglingCheck.Location = new System.Drawing.Point(12, 146);
             this.togglingCheck.Name = "togglingCheck";
             this.togglingCheck.Size = new System.Drawing.Size(300, 17);
             this.togglingCheck.TabIndex = 29;
@@ -184,11 +187,42 @@ namespace WordGenerator.ChannelManager
             this.togglingCheck.UseVisualStyleBackColor = true;
             this.togglingCheck.CheckedChanged += new System.EventHandler(this.togglingCheck_CheckedChanged);
             // 
+            // turnOffBox
+            // 
+            this.turnOffBox.AutoSize = true;
+            this.turnOffBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.turnOffBox.Location = new System.Drawing.Point(12, 162);
+            this.turnOffBox.Name = "turnOffBox";
+            this.turnOffBox.Size = new System.Drawing.Size(185, 17);
+            this.turnOffBox.TabIndex = 14;
+            this.turnOffBox.Text = "Turn off channel if AI check fails?";
+            this.turnOffBox.UseVisualStyleBackColor = true;
+            this.turnOffBox.CheckedChanged += new System.EventHandler(this.turnOff_CheckedChanged);
+            // 
+            // orderingGroupLabel
+            // 
+            this.orderingGroupLabel.AutoSize = true;
+            this.orderingGroupLabel.Location = new System.Drawing.Point(12, 184);
+            this.orderingGroupLabel.Name = "orderingGroupLabel";
+            this.orderingGroupLabel.Size = new System.Drawing.Size(80, 13);
+            this.orderingGroupLabel.TabIndex = 0;
+            this.orderingGroupLabel.Text = "Ordering group:";
+            // 
+            // orderingGroups
+            // 
+            this.orderingGroups.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.orderingGroups.FormattingEnabled = true;
+            this.orderingGroups.Location = new System.Drawing.Point(119, 181);
+            this.orderingGroups.Name = "orderingGroups";
+            this.orderingGroups.Size = new System.Drawing.Size(121, 21);
+            this.orderingGroups.TabIndex = 16;
+            this.orderingGroups.DropDown += new System.EventHandler(this.orderingGroupsComboBox_DropDown);
+            // 
             // EditDevice
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(342, 209);
+            this.ClientSize = new System.Drawing.Size(342, 235);
             this.Controls.Add(this.togglingCheck);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.refreshHardwareButton);
@@ -204,6 +238,9 @@ namespace WordGenerator.ChannelManager
             this.Controls.Add(this.lblType);
             this.Controls.Add(this.lblDescription);
             this.Controls.Add(this.lblName);
+            this.Controls.Add(this.turnOffBox);
+            this.Controls.Add(this.orderingGroupLabel);
+            this.Controls.Add(this.orderingGroups);
             this.Name = "EditDevice";
             this.Text = "Edit logical device";
             this.ResumeLayout(false);
@@ -228,5 +265,8 @@ namespace WordGenerator.ChannelManager
         private System.Windows.Forms.Button refreshHardwareButton;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.CheckBox togglingCheck;
+        private System.Windows.Forms.CheckBox turnOffBox;
+        private System.Windows.Forms.Label orderingGroupLabel;
+        private System.Windows.Forms.ComboBox orderingGroups;
     }
 }

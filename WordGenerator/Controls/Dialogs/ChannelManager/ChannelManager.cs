@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using DataStructures;
+using System.ComponentModel;
 
 namespace WordGenerator.ChannelManager
 {
@@ -14,6 +15,7 @@ namespace WordGenerator.ChannelManager
         /// </summary>
         public List<HardwareChannel> knownHardwareChannels;
 
+        public enum ChannelOrderingMethods {[Description("Alphabetically")] Alphabetical, [Description("By Creation Time")] Creation };
 
         public ChannelManager()
         {
@@ -28,6 +30,9 @@ namespace WordGenerator.ChannelManager
             foreach (HardwareChannel.HardwareConstants.ChannelTypes ct in HardwareChannel.HardwareConstants.allChannelTypes)
                 this.deviceTypeCombo.Items.Add(ct.ToString());
             this.deviceTypeCombo.SelectedIndex = 0; // Set the default state to "Show all"
+
+            if (Storage.sequenceData != null && !Storage.sequenceData.OrderingGroups.ContainsKey(SequenceData.OrderingGroupTypes.LogicalChannels))
+                Storage.sequenceData.OrderingGroups.Add(SequenceData.OrderingGroupTypes.LogicalChannels, new HashSet<string>());
         }
 
         /// <summary>
@@ -75,18 +80,30 @@ namespace WordGenerator.ChannelManager
         {
             ChannelCollection selectedDeviceDict =
                 Storage.settingsData.logicalChannelManager.GetDeviceCollection(ct);
+            List<KeyValuePair<int, LogicalChannel>> channels = new List<KeyValuePair<int, LogicalChannel>>(selectedDeviceDict.Channels);
 
-            foreach (int logicalID in selectedDeviceDict.Channels.Keys)
-                EmitLogicalDeviceToGrid(ct, logicalID, selectedDeviceDict.Channels[logicalID]);
+            if (orderChannelsCheckBox.Checked)
+                OrderLogicalChannels(orderChannels.SelectedItem as String, channels);
+
+            foreach (KeyValuePair<int, LogicalChannel> channel in channels)
+                EmitLogicalDeviceToGrid(ct, channel.Key, channel.Value);
         }
+
         private void EmitLogicalDeviceToGrid(HardwareChannel.HardwareConstants.ChannelTypes ct, int logicalID, LogicalChannel lc)
         {
+            //ToDo: Edit to include channel's ordering group
             string[] row = { ct.ToString(),
                              logicalID.ToString(), 
                              lc.Name,
                              lc.Description,
-                             lc.HardwareChannel.ToString() };
+                             lc.HardwareChannel.ToString(),
+                             lc.OrderingGroup };
             logicalDevicesDataGridView.Rows.Add(row);
+
+            //Change row's color if the channel is one that is supposed to turn off if AI check fails
+            int rowNum = logicalDevicesDataGridView.Rows.Count - 1;
+            if (Storage.settingsData.ChannelsToTurnOff[ct].ContainsKey(logicalID))
+                logicalDevicesDataGridView.Rows[rowNum].DefaultCellStyle.BackColor = System.Drawing.Color.LightSlateGray;
         }
 
         /// <summary>
@@ -156,6 +173,12 @@ namespace WordGenerator.ChannelManager
             EditDevice editDevice = new EditDevice(selectedDevice, this);
             editDevice.ShowDialog();
             editDevice.Dispose();
+
+            //Change row's color if the channel is one that is supposed to turn off if AI check fails
+            if (Storage.settingsData.ChannelsToTurnOff[selectedDevice.channelType].ContainsKey(selectedDevice.logicalID))
+                logicalDevicesDataGridView.SelectedRows[0].DefaultCellStyle.BackColor = System.Drawing.Color.LightSlateGray;
+            else
+                logicalDevicesDataGridView.SelectedRows[0].DefaultCellStyle.BackColor = System.Drawing.Color.White;
         }
 
         private void deleteDeviceButton_Click(object sender, EventArgs e)
@@ -186,6 +209,101 @@ namespace WordGenerator.ChannelManager
             MainClientForm.instance.RefreshSequenceDataToUI();
           //  mainClientForm.instance.Enabled = true;
         }
- 
+
+        private void populateOrderChannelsComboBox()
+        {
+            orderChannels.Items.Clear();
+            Array methods = Enum.GetValues(typeof(ChannelOrderingMethods));
+            foreach (ChannelOrderingMethods method in methods)
+                orderChannels.Items.Add(method.GetDescription());
+        }
+
+        private void orderChannelsComboBox_DropDown(object sender, EventArgs e)
+        {
+            populateOrderChannelsComboBox();
+        }
+
+        private void orderChannelsComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (orderChannelsCheckBox.Checked)
+                RefreshLogicalDeviceDataGrid();
+        }
+
+        private void sortByGroup_CheckedChanged(object sender, EventArgs e)
+        {
+            if (orderChannelsCheckBox.Checked)
+                RefreshLogicalDeviceDataGrid();
+        }
+
+        private void deleteOrderingGroupButton_Click(object sender, EventArgs e)
+        {
+            if (Storage.sequenceData != null && Storage.settingsData != null)
+            {
+                String groupToDelete = orderingGroupComboBox.SelectedItem as String;
+                Storage.sequenceData.OrderingGroups[SequenceData.OrderingGroupTypes.LogicalChannels].Remove(groupToDelete);
+
+                //For each channel that used to be in this ordering group, 
+                //set its new ordering group to be null
+                List<LogicalChannel> channels = Storage.settingsData.logicalChannelManager.AllChannels;
+
+                foreach (LogicalChannel channel in channels)
+                {
+                    if (channel.OrderingGroup == groupToDelete)
+                        channel.OrderingGroup = null;
+                }
+
+                orderingGroupComboBox.SelectedItem = null;
+                if (orderChannelsCheckBox.Checked)
+                    RefreshLogicalDeviceDataGrid();
+            }
+        }
+
+        private void createOrderingGroupButton_Click(object sender, EventArgs e)
+        {
+            if (Storage.sequenceData != null)
+                Storage.sequenceData.OrderingGroups[SequenceData.OrderingGroupTypes.LogicalChannels].Add(orderingGroupTextBox.Text);
+        }
+
+        private void populateOrderingGroupComboBox()
+        {
+            if (Storage.sequenceData != null)
+            {
+                orderingGroupComboBox.Items.Clear();
+                List<String> sortedGroups = new List<String>(Storage.sequenceData.OrderingGroups[SequenceData.OrderingGroupTypes.LogicalChannels]);
+                sortedGroups.Sort();
+                foreach (String group in sortedGroups)
+                    orderingGroupComboBox.Items.Add(group);
+            }
+        }
+
+        private void orderingGroupComboBox_DropDown(object sender, EventArgs e)
+        {
+            populateOrderingGroupComboBox();
+        }
+
+        private void orderChannelsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            RefreshLogicalDeviceDataGrid();
+        }
+
+        private void OrderLogicalChannels(string method, List<KeyValuePair<int, LogicalChannel>> channels)
+        {
+            if (method == ChannelOrderingMethods.Alphabetical.GetDescription())
+                channels.Sort((x, y) => x.Value.CompareByAlphabeticalPositionTo(y.Value, sortByGroup.Checked));
+            else if (method == ChannelOrderingMethods.Creation.GetDescription())
+                channels.Sort((x, y) => CompareByKeys(x,y,sortByGroup.Checked));
+        }
+
+        private int CompareByKeys(KeyValuePair<int,LogicalChannel> x, KeyValuePair<int,LogicalChannel> y, bool useGroups)
+        {
+            int comparison = 0;
+            if (useGroups)
+                comparison = String.Compare(x.Value.OrderingGroup, y.Value.OrderingGroup, StringComparison.CurrentCulture);
+
+            if (comparison == 0)
+                comparison = x.Key.CompareTo(y.Key);
+
+            return comparison;
+        }
     }
 }

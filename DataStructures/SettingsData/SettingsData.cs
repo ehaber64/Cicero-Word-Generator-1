@@ -9,7 +9,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace DataStructures
 {
     /// <summary>
-    /// The SettingsData class stores permanent application data which does not chance for
+    /// The SettingsData class stores permanent application data which does not change for
     /// different sequence programs. Examples include names of logical channels and their mappings
     /// to hardware channels, and information about what servers to connect to.
     /// </summary>
@@ -228,6 +228,24 @@ namespace DataStructures
             set { runlogDatabaseSettings = value; }
         }
 
+        private bool tryToOpenAtticusOnStartup = true;
+
+        [Description("If true then Cicero will try to open Atticus when it starts up.")]
+        public bool TryToOpenAtticusOnStartup
+        {
+            get { return tryToOpenAtticusOnStartup; }
+            set { tryToOpenAtticusOnStartup = value; }
+        }
+
+        private String atticusFilePath;
+
+        [Description("File path so that Cicero can open Atticus on startup.")]
+        public String AtticusFilePath
+        {
+            get { return atticusFilePath; }
+            set { atticusFilePath = value; }
+        }
+
         public SettingsData()
         {
             myLogicalChannelManager = new LogicalChannelManager();
@@ -248,6 +266,33 @@ namespace DataStructures
         {
             get { return alwaysUseNetworkClock; }
             set { alwaysUseNetworkClock = value; }
+        }
+
+        private Dictionary<HardwareChannel.HardwareConstants.ChannelTypes, Dictionary<int, LogicalChannel>> channelsToTurnOff;
+
+        /// <summary>
+        /// If analog input check fails then the channels corresponding to these types and IDs will be turned off when the sequence runs.
+        /// </summary>
+        public Dictionary<HardwareChannel.HardwareConstants.ChannelTypes, Dictionary<int, LogicalChannel>> ChannelsToTurnOff
+        {
+            get {
+                if (channelsToTurnOff == null)
+                {
+                    channelsToTurnOff = new Dictionary<HardwareChannel.HardwareConstants.ChannelTypes, Dictionary<int, LogicalChannel>>();
+                    foreach (HardwareChannel.HardwareConstants.ChannelTypes type in HardwareChannel.HardwareConstants.allChannelTypes)
+                    { channelsToTurnOff.Add(type, new Dictionary<int, LogicalChannel>()); }
+                }
+                return channelsToTurnOff;
+            }
+            set { channelsToTurnOff = value; }
+        }
+
+        private string secondBackupFilePath;
+
+        public string SecondBackupFilePath
+        {
+            get { return secondBackupFilePath; }
+            set { secondBackupFilePath = value; }
         }
 
         #region Version Number Tracking

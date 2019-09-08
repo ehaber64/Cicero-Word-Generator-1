@@ -29,6 +29,7 @@ namespace WordGenerator.Controls
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AnalogGroupEditor));
             this.groupChannelSelectorPanel = new System.Windows.Forms.Panel();
             this.groupChannelSelectorPlaceholder = new WordGenerator.Controls.GroupChannelSelection();
             this.newGroupButton = new System.Windows.Forms.Button();
@@ -39,9 +40,10 @@ namespace WordGenerator.Controls
             this.timeResolutionLabel = new System.Windows.Forms.Label();
             this.descBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.plus = new System.Windows.Forms.Button();
-            this.minus = new System.Windows.Forms.Button();
+            this.uparrow = new System.Windows.Forms.Button();
+            this.downarrow = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.orderGroups = new System.Windows.Forms.ComboBox();
             this.runOrderPanel = new System.Windows.Forms.Panel();
             this.label3 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -81,7 +83,7 @@ namespace WordGenerator.Controls
             this.newGroupButton.TabIndex = 3;
             this.newGroupButton.Text = "Create New Group";
             this.newGroupButton.UseVisualStyleBackColor = true;
-            this.newGroupButton.Click += new System.EventHandler(this.button1_Click);
+            this.newGroupButton.Click += new System.EventHandler(this.newGroupButton_Click);
             // 
             // analogGroupSelector
             // 
@@ -89,11 +91,11 @@ namespace WordGenerator.Controls
             this.analogGroupSelector.FormattingEnabled = true;
             this.analogGroupSelector.Location = new System.Drawing.Point(3, 3);
             this.analogGroupSelector.Name = "analogGroupSelector";
-            this.analogGroupSelector.Size = new System.Drawing.Size(110, 21);
+            this.analogGroupSelector.Size = new System.Drawing.Size(92, 21);
             this.analogGroupSelector.TabIndex = 6;
+            this.analogGroupSelector.DropDown += new System.EventHandler(this.comboBox1_DropDown);
             this.analogGroupSelector.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             this.analogGroupSelector.DropDownClosed += new System.EventHandler(this.analogGroupSelector_DropDownClosed);
-            this.analogGroupSelector.DropDown += new System.EventHandler(this.comboBox1_DropDown);
             // 
             // renameTextBox
             // 
@@ -105,7 +107,7 @@ namespace WordGenerator.Controls
             // 
             // renameButton
             // 
-            this.renameButton.Location = new System.Drawing.Point(101, 29);
+            this.renameButton.Location = new System.Drawing.Point(137, 29);
             this.renameButton.Name = "renameButton";
             this.renameButton.Size = new System.Drawing.Size(66, 21);
             this.renameButton.TabIndex = 8;
@@ -150,29 +152,43 @@ namespace WordGenerator.Controls
             this.label2.TabIndex = 14;
             this.label2.Text = "Description:";
             // 
-            // plus
+            // uparrow
             // 
-            this.plus.Location = new System.Drawing.Point(119, 3);
-            this.plus.Name = "plus";
-            this.plus.Size = new System.Drawing.Size(22, 22);
-            this.plus.TabIndex = 15;
-            this.plus.Text = "+";
-            this.plus.UseVisualStyleBackColor = true;
-            this.plus.Click += new System.EventHandler(this.plus_Click);
+            this.uparrow.Location = new System.Drawing.Point(101, 3);
+            this.uparrow.Name = "uparrow";
+            this.uparrow.Size = new System.Drawing.Size(32, 22);
+            this.uparrow.TabIndex = 15;
+            this.uparrow.Text = "/\\";
+            this.uparrow.UseVisualStyleBackColor = true;
+            this.toolTip1.SetToolTip(this.uparrow, "Shift the current analog group up by one.");
+            this.uparrow.Click += new System.EventHandler(this.uparrow_Click);
             // 
-            // minus
+            // downarrow
             // 
-            this.minus.Location = new System.Drawing.Point(147, 3);
-            this.minus.Name = "minus";
-            this.minus.Size = new System.Drawing.Size(22, 22);
-            this.minus.TabIndex = 16;
-            this.minus.Text = "-";
-            this.minus.UseVisualStyleBackColor = true;
-            this.minus.Click += new System.EventHandler(this.minus_Click);
+            this.downarrow.Location = new System.Drawing.Point(101, 28);
+            this.downarrow.Name = "downarrow";
+            this.downarrow.Size = new System.Drawing.Size(32, 22);
+            this.downarrow.TabIndex = 16;
+            this.downarrow.Text = "\\/";
+            this.downarrow.UseVisualStyleBackColor = true;
+            this.toolTip1.SetToolTip(this.downarrow, "Shift the current analog group down by one.");
+            this.downarrow.Click += new System.EventHandler(this.downarrow_Click);
             // 
             // toolTip1
             // 
             this.toolTip1.AutomaticDelay = 100;
+            // 
+            // orderGroups
+            // 
+            this.orderGroups.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.orderGroups.FormattingEnabled = true;
+            this.orderGroups.Location = new System.Drawing.Point(137, 4);
+            this.orderGroups.Name = "orderGroups";
+            this.orderGroups.Size = new System.Drawing.Size(72, 21);
+            this.orderGroups.TabIndex = 16;
+            this.toolTip1.SetToolTip(this.orderGroups, "Select a sorting method for the analog groups.");
+            this.orderGroups.DropDown += new System.EventHandler(this.orderGroupsComboBox_DropDown);
+            this.orderGroups.SelectedIndexChanged += new System.EventHandler(this.orderGroupsComboBox_SelectedIndexChanged);
             // 
             // runOrderPanel
             // 
@@ -224,8 +240,8 @@ namespace WordGenerator.Controls
             this.replacementGroupSelector.Name = "replacementGroupSelector";
             this.replacementGroupSelector.Size = new System.Drawing.Size(122, 21);
             this.replacementGroupSelector.TabIndex = 20;
-            this.replacementGroupSelector.SelectedValueChanged += new System.EventHandler(this.replacementGroupSelector_SelectedValueChanged);
             this.replacementGroupSelector.DropDown += new System.EventHandler(this.replacementSelector_DropDown_1);
+            this.replacementGroupSelector.SelectedValueChanged += new System.EventHandler(this.replacementGroupSelector_SelectedValueChanged);
             // 
             // timeResolutionEditor
             // 
@@ -244,6 +260,7 @@ namespace WordGenerator.Controls
             this.waveformEditor1.Size = new System.Drawing.Size(269, 790);
             this.waveformEditor1.TabIndex = 2;
             this.waveformEditor1.copyDuration += new System.EventHandler(this.waveformEditor1_copyDuration);
+            this.waveformEditor1.Load += new System.EventHandler(this.waveformEditor1_Load);
             // 
             // waveformGraphCollection1
             // 
@@ -273,8 +290,8 @@ namespace WordGenerator.Controls
             this.Controls.Add(this.replaceGroupButton);
             this.Controls.Add(this.runOrderPanel);
             this.Controls.Add(this.timeResolutionEditor);
-            this.Controls.Add(this.minus);
-            this.Controls.Add(this.plus);
+            this.Controls.Add(this.downarrow);
+            this.Controls.Add(this.uparrow);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.descBox);
             this.Controls.Add(this.timeResolutionLabel);
@@ -286,6 +303,7 @@ namespace WordGenerator.Controls
             this.Controls.Add(this.waveformEditor1);
             this.Controls.Add(this.waveformGraphCollection1);
             this.Controls.Add(this.groupChannelSelectorPanel);
+            this.Controls.Add(this.orderGroups);
             this.Name = "AnalogGroupEditor";
             this.Size = new System.Drawing.Size(1320, 918);
             this.VisibleChanged += new System.EventHandler(this.AnalogGroupEditor_VisibleChanged);
@@ -311,8 +329,8 @@ namespace WordGenerator.Controls
         private System.Windows.Forms.Label timeResolutionLabel;
         private System.Windows.Forms.TextBox descBox;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button plus;
-        private System.Windows.Forms.Button minus;
+        private System.Windows.Forms.Button uparrow;
+        private System.Windows.Forms.Button downarrow;
         private HorizontalParameterEditor timeResolutionEditor;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Panel runOrderPanel;
@@ -321,6 +339,7 @@ namespace WordGenerator.Controls
         private System.Windows.Forms.Button replaceGroupButton;
         private System.Windows.Forms.ComboBox replacementGroupSelector;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.ComboBox orderGroups;
 
     }
 }
